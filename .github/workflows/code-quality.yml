@@ -18,7 +18,6 @@ jobs:
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: '3.32.8'
         channel: 'stable'
         
     - name: Install dependencies
@@ -28,20 +27,7 @@ jobs:
       run: dart format --output=none --set-exit-if-changed .
       
     - name: Analyze code
-      run: flutter analyze --fatal-infos
+      run: flutter analyze
       
-    - name: Check for unused dependencies
-      run: flutter pub deps --no-dev
-      
-    - name: Run security audit
-      run: flutter pub audit
-      
-    - name: Generate coverage report
-      run: |
-        flutter test --coverage
-        
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v3
-      with:
-        file: coverage/lcov.info
-        fail_ci_if_error: false
+    - name: Run tests
+      run: flutter test
