@@ -1,15 +1,15 @@
-name: Code Quality
+name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 
 jobs:
-  code-quality:
+  build-and-deploy:
     runs-on: ubuntu-latest
-    name: Code Quality Analysis
+    name: Build, Test and Deploy
     
     steps:
     - name: Checkout código
@@ -31,3 +31,13 @@ jobs:
       
     - name: Run tests
       run: flutter test
+      
+    - name: Build web
+      run: flutter build web --release
+      
+    - name: Deploy to GitHub Pages
+      if: github.ref == 'refs/heads/main'
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: build/web/
