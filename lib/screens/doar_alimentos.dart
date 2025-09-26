@@ -4,6 +4,7 @@ import '../components/header.dart';
 import '../components/footer.dart';
 import '../models/campaign.dart';
 import '../models/auth_manager.dart';
+import '../services/analytics_service.dart';
 
 class DoarAlimentosPage extends StatefulWidget {
   final Campaign campanha;
@@ -16,13 +17,46 @@ class DoarAlimentosPage extends StatefulWidget {
 
 class _DoarAlimentosPageState extends State<DoarAlimentosPage> {
   final Map<String, int> _doacoes = {};
+  late Stopwatch _stopwatch;
+  int? _tempoCarregamento;
 
   @override
   void initState() {
     super.initState();
+    _stopwatch = Stopwatch()..start();
     // Inicializa o mapa de doações com os alimentos da campanha
     for (String alimento in widget.campanha.tiposAlimento) {
       _doacoes[alimento] = 0;
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_tempoCarregamento == null) {
+      _stopwatch.stop();
+      int loadTime = _stopwatch.elapsedMilliseconds;
+
+      // Tracking analytics
+      AnalyticsService().trackPageView('Doar Alimentos');
+      AnalyticsService().trackPageLoadTime('Doar Alimentos', loadTime);
+
+      // Track heavy page if load time > 1000ms
+      if (loadTime > 1000) {
+        AnalyticsService().trackHeavyPageMetrics(
+          'Doar Alimentos',
+          loadTimeMs: loadTime,
+          heavyOperations: [
+            'Loading donation form',
+            'Loading campaign data',
+            'Initializing food types',
+          ],
+        );
+      }
+
+      setState(() {
+        _tempoCarregamento = loadTime;
+      });
     }
   }
 

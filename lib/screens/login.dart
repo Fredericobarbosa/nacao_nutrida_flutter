@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../components/header_auth.dart';
 import '../components/login_form.dart';
+import '../services/analytics_service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -33,8 +34,23 @@ class _LoginPageState extends State<LoginPage> {
     super.didChangeDependencies();
     if (_tempoCarregamento == null) {
       _stopwatch.stop();
+      int loadTime = _stopwatch.elapsedMilliseconds;
+
+      // Tracking analytics
+      AnalyticsService().trackPageView('Login');
+      AnalyticsService().trackPageLoadTime('Login', loadTime);
+
+      // Track heavy page if load time > 1000ms
+      if (loadTime > 1000) {
+        AnalyticsService().trackHeavyPageMetrics(
+          'Login',
+          loadTimeMs: loadTime,
+          heavyOperations: ['Loading header', 'Loading login form'],
+        );
+      }
+
       setState(() {
-        _tempoCarregamento = _stopwatch.elapsedMilliseconds;
+        _tempoCarregamento = loadTime;
       });
     }
   }

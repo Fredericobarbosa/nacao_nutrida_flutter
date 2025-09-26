@@ -4,11 +4,56 @@ import '../components/header.dart';
 import '../components/footer.dart';
 import '../models/campaign.dart';
 import '../models/auth_manager.dart';
+import '../services/analytics_service.dart';
 
-class DetalhesCampanhaPage extends StatelessWidget {
+class DetalhesCampanhaPage extends StatefulWidget {
   final Campaign campanha;
 
   const DetalhesCampanhaPage({super.key, required this.campanha});
+
+  @override
+  State<DetalhesCampanhaPage> createState() => _DetalhesCampanhaPageState();
+}
+
+class _DetalhesCampanhaPageState extends State<DetalhesCampanhaPage> {
+  late Stopwatch _stopwatch;
+  int? _tempoCarregamento;
+
+  @override
+  void initState() {
+    super.initState();
+    _stopwatch = Stopwatch()..start();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_tempoCarregamento == null) {
+      _stopwatch.stop();
+      int loadTime = _stopwatch.elapsedMilliseconds;
+
+      // Tracking analytics
+      AnalyticsService().trackPageView('Detalhes Campanha');
+      AnalyticsService().trackPageLoadTime('Detalhes Campanha', loadTime);
+
+      // Track heavy page if load time > 1000ms
+      if (loadTime > 1000) {
+        AnalyticsService().trackHeavyPageMetrics(
+          'Detalhes Campanha',
+          loadTimeMs: loadTime,
+          heavyOperations: [
+            'Loading campaign details',
+            'Loading header',
+            'Loading footer',
+          ],
+        );
+      }
+
+      setState(() {
+        _tempoCarregamento = loadTime;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +114,7 @@ class DetalhesCampanhaPage extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                campanha.title,
+                widget.campanha.title,
                 style: const TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
@@ -82,7 +127,7 @@ class DetalhesCampanhaPage extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         Text(
-          campanha.description,
+          widget.campanha.description,
           style: const TextStyle(fontSize: 16, color: Colors.grey, height: 1.5),
         ),
       ],
@@ -91,7 +136,7 @@ class DetalhesCampanhaPage extends StatelessWidget {
 
   Widget _buildStatusChip() {
     Color corStatus;
-    switch (campanha.status.toLowerCase()) {
+    switch (widget.campanha.status.toLowerCase()) {
       case 'ativa':
         corStatus = Colors.green;
         break;
@@ -113,7 +158,7 @@ class DetalhesCampanhaPage extends StatelessWidget {
         border: Border.all(color: corStatus, width: 1),
       ),
       child: Text(
-        campanha.statusFormatado,
+        widget.campanha.statusFormatado,
         style: TextStyle(
           color: corStatus,
           fontWeight: FontWeight.bold,
@@ -137,9 +182,9 @@ class DetalhesCampanhaPage extends StatelessWidget {
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: campanha.imageUrl != null
+            child: widget.campanha.imageUrl != null
                 ? Image.network(
-                    campanha.imageUrl!,
+                    widget.campanha.imageUrl!,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) =>
                         _buildImagemPadrao(),
@@ -153,14 +198,20 @@ class DetalhesCampanhaPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildInfoItem('Responsável', campanha.responsavel),
+              _buildInfoItem('Responsável', widget.campanha.responsavel),
               const SizedBox(height: 12),
-              _buildInfoItem('Endereço', campanha.endereco),
+              _buildInfoItem('Endereço', widget.campanha.endereco),
               const SizedBox(height: 12),
-              _buildInfoItem('Data Início', _formatarData(campanha.dataInicio)),
-              if (campanha.dataFim != null) ...[
+              _buildInfoItem(
+                'Data Início',
+                _formatarData(widget.campanha.dataInicio),
+              ),
+              if (widget.campanha.dataFim != null) ...[
                 const SizedBox(height: 12),
-                _buildInfoItem('Data Fim', _formatarData(campanha.dataFim!)),
+                _buildInfoItem(
+                  'Data Fim',
+                  _formatarData(widget.campanha.dataFim!),
+                ),
               ],
             ],
           ),
@@ -218,7 +269,7 @@ class DetalhesCampanhaPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '${campanha.totalAlimentosArrecadados} kg',
+                '${widget.campanha.totalAlimentosArrecadados} kg',
                 style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -226,7 +277,7 @@ class DetalhesCampanhaPage extends StatelessWidget {
                 ),
               ),
               Text(
-                '${campanha.percentualArrecadado.toStringAsFixed(1)}%',
+                '${widget.campanha.percentualArrecadado.toStringAsFixed(1)}%',
                 style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -237,12 +288,12 @@ class DetalhesCampanhaPage extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'Meta: ${campanha.totalMetaAlimentos} kg',
+            'Meta: ${widget.campanha.totalMetaAlimentos} kg',
             style: const TextStyle(fontSize: 14, color: Colors.grey),
           ),
           const SizedBox(height: 12),
           LinearProgressIndicator(
-            value: campanha.percentualArrecadado / 100,
+            value: widget.campanha.percentualArrecadado / 100,
             backgroundColor: Colors.grey[300],
             valueColor: const AlwaysStoppedAnimation<Color>(Colors.green),
             minHeight: 8,
@@ -279,11 +330,11 @@ class DetalhesCampanhaPage extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Column(
-            children: campanha.metaAlimentos.entries.map((entry) {
+            children: widget.campanha.metaAlimentos.entries.map((entry) {
               final alimento = entry.key;
               final metaQtd = entry.value;
               final arrecadadoQtd =
-                  campanha.alimentosArrecadados[alimento] ?? 0;
+                  widget.campanha.alimentosArrecadados[alimento] ?? 0;
               final percentual = metaQtd > 0
                   ? (arrecadadoQtd / metaQtd) * 100
                   : 0;
@@ -379,13 +430,13 @@ class DetalhesCampanhaPage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          _buildInfoRow('ID da Campanha', campanha.id),
-          _buildInfoRow('Status Atual', campanha.statusFormatado),
-          _buildInfoRow('Responsável', campanha.responsavel),
-          _buildInfoRow('Localização', campanha.endereco),
-          _buildInfoRow('Início', _formatarData(campanha.dataInicio)),
-          if (campanha.dataFim != null)
-            _buildInfoRow('Término', _formatarData(campanha.dataFim!)),
+          _buildInfoRow('ID da Campanha', widget.campanha.id),
+          _buildInfoRow('Status Atual', widget.campanha.statusFormatado),
+          _buildInfoRow('Responsável', widget.campanha.responsavel),
+          _buildInfoRow('Localização', widget.campanha.endereco),
+          _buildInfoRow('Início', _formatarData(widget.campanha.dataInicio)),
+          if (widget.campanha.dataFim != null)
+            _buildInfoRow('Término', _formatarData(widget.campanha.dataFim!)),
         ],
       ),
     );
@@ -442,9 +493,13 @@ class DetalhesCampanhaPage extends StatelessWidget {
         Expanded(
           child: ElevatedButton.icon(
             onPressed: () {
+              AnalyticsService().trackButtonClick(
+                'Fazer Doação',
+                'Detalhes Campanha',
+              );
               Navigator.of(
                 context,
-              ).pushNamed('/doar-alimentos', arguments: campanha);
+              ).pushNamed('/doar-alimentos', arguments: widget.campanha);
             },
             icon: const Icon(Icons.volunteer_activism),
             label: const Text('Fazer Doação'),

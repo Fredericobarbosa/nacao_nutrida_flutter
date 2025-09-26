@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../components/header.dart';
 import '../components/footer.dart';
 import '../components/center_content.dart';
+import '../services/analytics_service.dart';
 
 class DescobrirPage extends StatefulWidget {
   const DescobrirPage({super.key});
@@ -29,6 +30,29 @@ class _DescobrirPageState extends State<DescobrirPage> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_tempoCarregamento != null) {
+      // Tracking analytics
+      AnalyticsService().trackPageView('Descobrir');
+      AnalyticsService().trackPageLoadTime('Descobrir', _tempoCarregamento!);
+
+      // Track heavy page if load time > 1000ms
+      if (_tempoCarregamento! > 1000) {
+        AnalyticsService().trackHeavyPageMetrics(
+          'Descobrir',
+          loadTimeMs: _tempoCarregamento!,
+          heavyOperations: [
+            'Loading campaigns',
+            'Loading header',
+            'Loading content',
+          ],
+        );
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFf6f6f6),
@@ -50,6 +74,10 @@ class _DescobrirPageState extends State<DescobrirPage> {
                               color: Color(0xFF027ba1),
                             ),
                             onPressed: () {
+                              AnalyticsService().trackButtonClick(
+                                'Voltar',
+                                'Descobrir',
+                              );
                               Navigator.pop(context);
                             },
                           ),

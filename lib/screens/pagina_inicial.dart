@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../components/header.dart';
 import '../components/footer.dart';
 import '../components/left_sidebar.dart';
+import '../services/analytics_service.dart';
 
 class PaginaInicial extends StatefulWidget {
   const PaginaInicial({super.key});
@@ -25,8 +26,23 @@ class _PaginaInicialState extends State<PaginaInicial> {
     super.didChangeDependencies();
     if (_tempoCarregamento == null) {
       _stopwatch.stop();
+      final loadTime = _stopwatch.elapsedMilliseconds;
+
+      // Coleta métricas da página inicial
+      AnalyticsService().trackPageView('pagina_inicial');
+      AnalyticsService().trackPageLoadTime('pagina_inicial', loadTime);
+
+      // Se demorou mais de 1 segundo, considera página pesada
+      if (loadTime > 1000) {
+        AnalyticsService().trackHeavyPageMetrics(
+          'pagina_inicial',
+          loadTimeMs: loadTime,
+          heavyOperations: ['Loading sidebar', 'Loading header'],
+        );
+      }
+
       setState(() {
-        _tempoCarregamento = _stopwatch.elapsedMilliseconds;
+        _tempoCarregamento = loadTime;
       });
     }
   }
@@ -42,6 +58,7 @@ class _PaginaInicialState extends State<PaginaInicial> {
               rightText: '',
               rightButtonText: 'Login',
               onRightButtonPressed: () {
+                AnalyticsService().trackButtonClick('Login', 'Header');
                 Navigator.of(context).pushNamed('/login');
               },
             ),
@@ -60,6 +77,17 @@ class _PaginaInicialState extends State<PaginaInicial> {
             const Footer(),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          AnalyticsService().trackButtonClick(
+            'Analytics Dashboard',
+            'FloatingButton',
+          );
+          Navigator.of(context).pushNamed('/analytics');
+        },
+        backgroundColor: const Color(0xFF027ba1),
+        child: const Icon(Icons.analytics, color: Colors.white),
       ),
     );
   }

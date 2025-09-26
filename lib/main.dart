@@ -9,6 +9,7 @@ import 'screens/cadastro_usuario.dart';
 import 'screens/cadastrar_campanha.dart';
 import 'screens/detalhes_campanha.dart';
 import 'screens/doar_alimentos.dart';
+import 'screens/analytics_dashboard.dart';
 
 void main() {
   runApp(
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => const LoginPage(),
         '/cadastro-usuario': (context) => const CadastroUsuarioPage(),
         '/cadastrar-campanha': (context) => const CadastrarCampanhaPage(),
+        '/analytics': (context) => const AnalyticsDashboard(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/detalhes-campanha') {
