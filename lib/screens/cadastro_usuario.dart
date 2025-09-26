@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../components/header_cadastro_usuario.dart';
+import '../components/header.dart';
 import '../components/cadastro_usuario_form.dart';
 
 class CadastroUsuarioPage extends StatelessWidget {
@@ -12,11 +12,13 @@ class CadastroUsuarioPage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            HeaderCadastroUsuario(
+            Header(
+              leftText: null,
+              rightText: '',
+              rightButtonText: 'Login',
               onRightButtonPressed: () {
-                Navigator.pushNamed(context, '/login');
+                Navigator.of(context).pushNamed('/login');
               },
-              showBackButton: true,
             ),
             Padding(
               padding: const EdgeInsets.all(24),
