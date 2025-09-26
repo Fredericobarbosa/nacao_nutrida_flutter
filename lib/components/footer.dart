@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Footer extends StatelessWidget {
   const Footer({super.key});
@@ -46,11 +47,33 @@ class Footer extends StatelessWidget {
           const SizedBox(height: 16),
           Row(
             children: [
-              _buildSocialIcon(),
-              const SizedBox(width: 8),
-              _buildSocialIcon(),
-              const SizedBox(width: 8),
-              _buildSocialIcon(),
+              _buildSocialIcon(
+                icon: FontAwesomeIcons.facebook,
+                onTap: () {
+                  // TODO: Implementar navegação para Facebook
+                },
+              ),
+              const SizedBox(width: 12),
+              _buildSocialIcon(
+                icon: FontAwesomeIcons.instagram,
+                onTap: () {
+                  // TODO: Implementar navegação para Instagram
+                },
+              ),
+              const SizedBox(width: 12),
+              _buildSocialIcon(
+                icon: FontAwesomeIcons.twitter,
+                onTap: () {
+                  // TODO: Implementar navegação para Twitter
+                },
+              ),
+              const SizedBox(width: 12),
+              _buildSocialIcon(
+                icon: FontAwesomeIcons.linkedin,
+                onTap: () {
+                  // TODO: Implementar navegação para LinkedIn
+                },
+              ),
             ],
           ),
         ],
@@ -58,13 +81,21 @@ class Footer extends StatelessWidget {
     );
   }
 
-  Widget _buildSocialIcon() {
-    return Container(
-      width: 24,
-      height: 24,
-      decoration: BoxDecoration(
-        color: Colors.white.withAlpha((0.2 * 255).toInt()),
-        borderRadius: BorderRadius.circular(4),
+  Widget _buildSocialIcon({
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 32,
+        height: 32,
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(6),
+          border: Border.all(color: Colors.white.withOpacity(0.2), width: 1),
+        ),
+        child: Center(child: FaIcon(icon, size: 16, color: Colors.white70)),
       ),
     );
   }
