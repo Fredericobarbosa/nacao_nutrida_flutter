@@ -66,7 +66,9 @@ class CadastroUsuarioForm extends StatelessWidget {
             _buildFormField('Senha', isPassword: true),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushNamed(context, '/login');
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF064789),
                 foregroundColor: Colors.white,

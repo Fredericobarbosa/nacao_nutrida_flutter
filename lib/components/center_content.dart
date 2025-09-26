@@ -38,7 +38,7 @@ class CenterContent extends StatelessWidget {
                     backgroundColor: const Color(0xFFffc436),
                     foregroundColor: const Color(0xFF191929),
                   ),
-                  child: const Text('Começar agora'),
+                  child: const Text('Procurar'),
                 ),
               ],
             ),

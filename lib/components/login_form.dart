@@ -55,7 +55,9 @@ class LoginForm extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushNamed(context, '/descobrir');
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF064789),
                 foregroundColor: Colors.white,

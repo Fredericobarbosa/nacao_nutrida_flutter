@@ -14,7 +14,7 @@ class PaginaInicial extends StatelessWidget {
         child: Column(
           children: [
             const Header(
-              leftText: 'Campanhas • Criar • Apostar',
+              leftText: 'Campanhas • Criar • Ajustes',
               rightText: 'Não tem conta?',
               rightButtonText: 'Cadastre-se',
               onRightButtonPressed: null,

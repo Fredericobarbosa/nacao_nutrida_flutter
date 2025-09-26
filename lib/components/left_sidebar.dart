@@ -34,27 +34,32 @@ class LeftSidebar extends StatelessWidget {
                 Row(
                   children: [
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/cadastrar-pedido');
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFffc436),
-                        foregroundColor: const Color(0xFF191929),
+                        foregroundColor: const Color.fromARGB(255, 255, 255, 255),
                         textStyle: const TextStyle(fontSize: 12),
                         padding: const EdgeInsets.symmetric(
                             horizontal: 12, vertical: 8),
                       ),
-                      child: const Text('Cadastre-se agora'),
+                      child: const Text('Cadastrar Campanha'),
                     ),
                     const SizedBox(width: 8),
                     OutlinedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/login');
+                      },
                       style: OutlinedButton.styleFrom(
                         side: const BorderSide(color: Color(0xFF769fcd)),
-                        foregroundColor: const Color(0xFF769fcd),
+                        backgroundColor: const Color(0xFF769fcd),
+                        foregroundColor: const Color.fromARGB(255, 254, 255, 254),
                         textStyle: const TextStyle(fontSize: 12),
                         padding: const EdgeInsets.symmetric(
                             horizontal: 12, vertical: 8),
                       ),
-                      child: const Text('Saiba mais'),
+                      child: const Text('Fazer doação'),
                     ),
                   ],
                 ),
@@ -89,7 +94,9 @@ class LeftSidebar extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/descobrir');
+                  },
                   child: const Text(
                     'Encontre campanhas em sua região →',
                     style: TextStyle(

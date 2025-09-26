@@ -29,18 +29,17 @@ class CadastroPedidoForm extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            _buildFormField('Título',
-                hintText: 'Sopão para moradores de rua'),
+            _buildFormField(
+              'Título',
+              hintText: 'Ex: Sopão para moradores de rua',
+            ),
             const SizedBox(height: 16),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
                   'Data de encerramento',
-                  style: TextStyle(
-                    color: Color(0xFF191929),
-                    fontSize: 14,
-                  ),
+                  style: TextStyle(color: Color(0xFF191929), fontSize: 14),
                 ),
                 const SizedBox(height: 8),
                 Row(
@@ -48,13 +47,16 @@ class CadastroPedidoForm extends StatelessWidget {
                     Expanded(
                       child: TextFormField(
                         decoration: const InputDecoration(
-                          hintText: '30/04/2021',
+                          hintText: 'Ex:30/04/2021',
                         ),
                       ),
                     ),
                     const SizedBox(width: 8),
-                    const Icon(Icons.calendar_today,
-                        size: 20, color: Color(0xFF8d8d8d)),
+                    const Icon(
+                      Icons.calendar_today,
+                      size: 20,
+                      color: Color(0xFF8d8d8d),
+                    ),
                   ],
                 ),
               ],
@@ -62,7 +64,9 @@ class CadastroPedidoForm extends StatelessWidget {
             const SizedBox(height: 16),
             // Additional form fields would be added here
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushNamed(context, '/descobrir');
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF064789),
                 foregroundColor: Colors.white,
@@ -82,17 +86,10 @@ class CadastroPedidoForm extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(
-            color: Color(0xFF191929),
-            fontSize: 14,
-          ),
+          style: const TextStyle(color: Color(0xFF191929), fontSize: 14),
         ),
         const SizedBox(height: 8),
-        TextFormField(
-          decoration: InputDecoration(
-            hintText: hintText,
-          ),
-        ),
+        TextFormField(decoration: InputDecoration(hintText: hintText)),
       ],
     );
   }

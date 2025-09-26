@@ -24,7 +24,18 @@ class Header extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          if (showLogo) _buildLogoWithText(leftText),
+          Row(
+            children: [
+              // Ícone de voltar
+              IconButton(
+                icon: const Icon(Icons.arrow_back, color: Color(0xFF191929)),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              if (showLogo) _buildLogoWithText(leftText),
+            ],
+          ),
           RichText(
             text: TextSpan(
               text: '$rightText ',
