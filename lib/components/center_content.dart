@@ -158,10 +158,6 @@ class CenterContent extends StatelessWidget {
                 const SizedBox(width: 8),
                 _buildPaginationButton('3'),
                 const SizedBox(width: 8),
-                _buildPaginationButton('4'),
-                const SizedBox(width: 8),
-                _buildPaginationButton('5'),
-                const SizedBox(width: 8),
                 const Text('...', style: TextStyle(color: Color(0xFF8d8d8d))),
                 const SizedBox(width: 8),
                 OutlinedButton(
