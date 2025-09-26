@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../models/auth_manager.dart';
 
 class LoginForm extends StatelessWidget {
   const LoginForm({super.key});
@@ -50,6 +52,14 @@ class LoginForm extends StatelessWidget {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
+                // Fazer login com dados de teste
+                final authManager = Provider.of<AuthManager>(
+                  context,
+                  listen: false,
+                );
+                authManager.loginWithTestUser();
+
+                // Navegar para a tela de descobrir
                 Navigator.of(context).pushNamed('/descobrir');
               },
               style: ElevatedButton.styleFrom(
