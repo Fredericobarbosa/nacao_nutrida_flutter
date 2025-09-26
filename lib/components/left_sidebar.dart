@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../models/auth_manager.dart';
 
 class LeftSidebar extends StatelessWidget {
   const LeftSidebar({super.key});
@@ -32,16 +34,21 @@ class LeftSidebar extends StatelessWidget {
                   children: [
                     ElevatedButton(
                       onPressed: () {
-                        Navigator.pushNamed(context, '/cadastrar-pedido');
+                        final isLoggedIn = Provider.of<AuthManager>(
+                          context,
+                          listen: false,
+                        ).isLoggedIn;
+                        if (isLoggedIn) {
+                          Navigator.of(
+                            context,
+                          ).pushNamed('/cadastrar-campanha');
+                        } else {
+                          Navigator.of(context).pushNamed('/login');
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFffc436),
-                        foregroundColor: const Color.fromARGB(
-                          255,
-                          255,
-                          255,
-                          255,
-                        ),
+                        foregroundColor: const Color(0xFF191929),
                         textStyle: const TextStyle(fontSize: 12),
                         padding: const EdgeInsets.symmetric(
                           horizontal: 12,
@@ -53,24 +60,18 @@ class LeftSidebar extends StatelessWidget {
                     const SizedBox(width: 8),
                     OutlinedButton(
                       onPressed: () {
-                        Navigator.pushNamed(context, '/login');
+                        Navigator.of(context).pushNamed('/descobrir');
                       },
                       style: OutlinedButton.styleFrom(
                         side: const BorderSide(color: Color(0xFF769fcd)),
-                        backgroundColor: const Color(0xFF769fcd),
-                        foregroundColor: const Color.fromARGB(
-                          255,
-                          254,
-                          255,
-                          254,
-                        ),
+                        foregroundColor: const Color(0xFF769fcd),
                         textStyle: const TextStyle(fontSize: 12),
                         padding: const EdgeInsets.symmetric(
                           horizontal: 12,
                           vertical: 8,
                         ),
                       ),
-                      child: const Text('Fazer doação'),
+                      child: const Text('Fazer Doação'),
                     ),
                   ],
                 ),
@@ -103,7 +104,7 @@ class LeftSidebar extends StatelessWidget {
                 const SizedBox(height: 16),
                 TextButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, '/descobrir');
+                    Navigator.of(context).pushNamed('/descobrir');
                   },
                   child: const Text(
                     'Encontre campanhas em sua região →',
@@ -230,7 +231,7 @@ class LeftSidebar extends StatelessWidget {
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.2),
+            color: Colors.white.withAlpha((0.2 * 255).toInt()),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(icon, size: 16, color: Colors.white),
@@ -246,7 +247,7 @@ class LeftSidebar extends StatelessWidget {
             Text(
               subtitle,
               style: TextStyle(
-                color: Colors.white.withOpacity(0.8),
+                color: Colors.white.withAlpha((0.8 * 255).toInt()),
                 fontSize: 14,
               ),
             ),

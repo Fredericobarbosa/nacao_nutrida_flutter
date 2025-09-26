@@ -22,31 +22,12 @@ class Footer extends StatelessWidget {
           const SizedBox(height: 8),
           const Text(
             'Plataforma para\nações sociais',
-            style: TextStyle(
-              color: Colors.white70,
-              fontSize: 14,
-            ),
+            style: TextStyle(color: Colors.white70, fontSize: 14),
           ),
           const SizedBox(height: 16),
           Row(
             children: [
-              Container(
-                width: 32,
-                height: 32,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFffc436),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Center(
-                  child: Text(
-                    'N',
-                    style: TextStyle(
-                      color: Color(0xFF191929),
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
+              Image.asset('assets/logo.png', width: 32, height: 32),
               const SizedBox(width: 8),
               const Text(
                 'Ajuda',
@@ -60,10 +41,7 @@ class Footer extends StatelessWidget {
           const SizedBox(height: 16),
           const Text(
             'Acompanhe nossas\nredes sociais',
-            style: TextStyle(
-              color: Colors.white70,
-              fontSize: 14,
-            ),
+            style: TextStyle(color: Colors.white70, fontSize: 14),
           ),
           const SizedBox(height: 16),
           Row(
@@ -85,7 +63,7 @@ class Footer extends StatelessWidget {
       width: 24,
       height: 24,
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.2),
+        color: Colors.white.withAlpha((0.2 * 255).toInt()),
         borderRadius: BorderRadius.circular(4),
       ),
     );

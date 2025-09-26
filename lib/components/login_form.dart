@@ -39,24 +39,18 @@ class LoginForm extends StatelessWidget {
               alignment: Alignment.centerRight,
               child: Text(
                 'Esqueci minha senha',
-                style: TextStyle(
-                  color: Color(0xFF027ba1),
-                  fontSize: 12,
-                ),
+                style: TextStyle(color: Color(0xFF027ba1), fontSize: 12),
               ),
             ),
             const SizedBox(height: 16),
             const Text(
               'Continuar conectado',
-              style: TextStyle(
-                color: Color(0xFF8d8d8d),
-                fontSize: 12,
-              ),
+              style: TextStyle(color: Color(0xFF8d8d8d), fontSize: 12),
             ),
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/descobrir');
+                Navigator.of(context).pushNamed('/descobrir');
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF064789),

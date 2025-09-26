@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import '../components/header.dart';
-import '../components/login_form.dart';
+import '../components/cadastro_campanha.dart';
 
-class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+class CadastrarPedidoPage extends StatelessWidget {
+  const CadastrarPedidoPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -14,13 +14,16 @@ class LoginPage extends StatelessWidget {
           children: [
             Header(
               leftText: null,
-              rightText: '',
+              rightText: 'Não tem conta?',
               rightButtonText: 'Cadastre-se',
               onRightButtonPressed: () {
                 Navigator.of(context).pushNamed('/cadastro-usuario');
               },
             ),
-            Padding(padding: const EdgeInsets.all(24), child: LoginForm()),
+            Padding(
+              padding: const EdgeInsets.all(24),
+              child: CadastroCampanhaForm(),
+            ),
           ],
         ),
       ),

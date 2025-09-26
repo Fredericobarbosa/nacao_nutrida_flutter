@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:file_picker/file_picker.dart';
-import 'dart:typed_data';
-import 'dart:convert';
 
 class CadastroCampanhaForm extends StatefulWidget {
   const CadastroCampanhaForm({super.key});
@@ -223,32 +220,15 @@ class _CadastroCampanhaFormState extends State<CadastroCampanhaForm> {
                   ),
                 ),
                 if (imagens.length < 5)
-                  GestureDetector(
-                    onTap: () async {
-                      FilePickerResult? result = await FilePicker.platform
-                          .pickFiles(
-                            type: FileType.image,
-                            allowMultiple: false,
-                          );
-                      if (result != null && result.files.isNotEmpty) {
-                        Uint8List? fileBytes = result.files.first.bytes;
-                        if (fileBytes != null) {
-                          String base64Image =
-                              'data:image/png;base64,${base64Encode(fileBytes)}';
-                          setState(() => imagens.add(base64Image));
-                        }
-                      }
-                    },
-                    child: Container(
-                      width: 80,
-                      height: 80,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        color: Colors.grey[200],
-                        border: Border.all(color: Colors.grey),
-                      ),
-                      child: const Center(child: Text('Upload')),
+                  Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: Colors.grey[200],
+                      border: Border.all(color: Colors.grey),
                     ),
+                    child: const Center(child: Text('Upload')),
                   ),
               ],
             ),
