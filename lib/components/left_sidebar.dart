@@ -25,10 +25,7 @@ class LeftSidebar extends StatelessWidget {
                 const SizedBox(height: 8),
                 const Text(
                   'Junte-se a nós e faça a diferença',
-                  style: TextStyle(
-                    color: Color(0xFF8d8d8d),
-                    fontSize: 14,
-                  ),
+                  style: TextStyle(color: Color(0xFF8d8d8d), fontSize: 14),
                 ),
                 const SizedBox(height: 16),
                 Row(
@@ -39,10 +36,17 @@ class LeftSidebar extends StatelessWidget {
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFffc436),
-                        foregroundColor: const Color.fromARGB(255, 255, 255, 255),
+                        foregroundColor: const Color.fromARGB(
+                          255,
+                          255,
+                          255,
+                          255,
+                        ),
                         textStyle: const TextStyle(fontSize: 12),
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 8),
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
                       ),
                       child: const Text('Cadastrar Campanha'),
                     ),
@@ -54,10 +58,17 @@ class LeftSidebar extends StatelessWidget {
                       style: OutlinedButton.styleFrom(
                         side: const BorderSide(color: Color(0xFF769fcd)),
                         backgroundColor: const Color(0xFF769fcd),
-                        foregroundColor: const Color.fromARGB(255, 254, 255, 254),
+                        foregroundColor: const Color.fromARGB(
+                          255,
+                          254,
+                          255,
+                          254,
+                        ),
                         textStyle: const TextStyle(fontSize: 12),
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 8),
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
                       ),
                       child: const Text('Fazer doação'),
                     ),
@@ -87,10 +98,7 @@ class LeftSidebar extends StatelessWidget {
                 const SizedBox(height: 8),
                 const Text(
                   'Encontre ações sociais da sua região e ajude a combater a fome perto de você',
-                  style: TextStyle(
-                    color: Color(0xFF8d8d8d),
-                    fontSize: 14,
-                  ),
+                  style: TextStyle(color: Color(0xFF8d8d8d), fontSize: 14),
                 ),
                 const SizedBox(height: 16),
                 TextButton(
@@ -99,10 +107,7 @@ class LeftSidebar extends StatelessWidget {
                   },
                   child: const Text(
                     'Encontre campanhas em sua região →',
-                    style: TextStyle(
-                      color: Color(0xFF027ba1),
-                      fontSize: 14,
-                    ),
+                    style: TextStyle(color: Color(0xFF027ba1), fontSize: 14),
                   ),
                 ),
               ],
@@ -128,11 +133,17 @@ class LeftSidebar extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-                _buildActionItem(Icons.people, 'Criar um projeto',
-                    'para sua ação social'),
+                _buildActionItem(
+                  Icons.people,
+                  'Criar um projeto',
+                  'para sua ação social',
+                ),
                 const SizedBox(height: 16),
-                _buildActionItem(Icons.favorite, 'Apoiar um projeto',
-                    'para sua ação social'),
+                _buildActionItem(
+                  Icons.favorite,
+                  'Apoiar um projeto',
+                  'para sua ação social',
+                ),
               ],
             ),
           ),
@@ -157,10 +168,16 @@ class LeftSidebar extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 _buildActionItem(
-                    Icons.search, 'Procurar projetos ou', 'ações na sua região'),
+                  Icons.search,
+                  'Procurar projetos ou',
+                  'ações na sua região',
+                ),
                 const SizedBox(height: 16),
-                _buildActionItem(Icons.description, 'Contribuir e entregar',
-                    'por meio do chat'),
+                _buildActionItem(
+                  Icons.description,
+                  'Contribuir e entregar',
+                  'por meio do chat',
+                ),
               ],
             ),
           ),
@@ -224,10 +241,7 @@ class LeftSidebar extends StatelessWidget {
           children: [
             Text(
               title,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 14,
-              ),
+              style: const TextStyle(color: Colors.white, fontSize: 14),
             ),
             Text(
               subtitle,
@@ -242,8 +256,13 @@ class LeftSidebar extends StatelessWidget {
     );
   }
 
-  Widget _buildTestimonial(String initials, String name, String role,
-      String testimonial, String achievement) {
+  Widget _buildTestimonial(
+    String initials,
+    String name,
+    String role,
+    String testimonial,
+    String achievement,
+  ) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -267,10 +286,7 @@ class LeftSidebar extends StatelessWidget {
               ),
               Text(
                 role,
-                style: const TextStyle(
-                  color: Color(0xFF8d8d8d),
-                  fontSize: 12,
-                ),
+                style: const TextStyle(color: Color(0xFF8d8d8d), fontSize: 12),
               ),
               const SizedBox(height: 4),
               Text(
@@ -284,10 +300,7 @@ class LeftSidebar extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 achievement,
-                style: const TextStyle(
-                  color: Color(0xFF027ba1),
-                  fontSize: 12,
-                ),
+                style: const TextStyle(color: Color(0xFF027ba1), fontSize: 12),
               ),
             ],
           ),

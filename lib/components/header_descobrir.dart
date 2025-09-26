@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
-class Header extends StatelessWidget {
+class HeaderDescobrir extends StatelessWidget {
   final String? leftText;
-  final String rightText;
-  final String rightButtonText;
+  final String? rightText;
+  final String? rightButtonText;
   final VoidCallback? onRightButtonPressed;
   final bool showLogo;
 
-  const Header({
+  const HeaderDescobrir({
     super.key,
     this.leftText,
-    required this.rightText,
-    required this.rightButtonText,
+    this.rightText,
+    this.rightButtonText,
     this.onRightButtonPressed,
     this.showLogo = true,
   });
@@ -22,11 +22,9 @@ class Header extends StatelessWidget {
       color: Colors.white,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
             children: [
-              // Ícone de voltar
               IconButton(
                 icon: const Icon(Icons.arrow_back, color: Color(0xFF191929)),
                 onPressed: () {
@@ -36,29 +34,19 @@ class Header extends StatelessWidget {
               if (showLogo) _buildLogoWithText(leftText),
             ],
           ),
-          RichText(
-            text: TextSpan(
-              text: '$rightText ',
-              style: const TextStyle(
-                color: Color(0xFF8d8d8d),
-                fontSize: 14,
-              ),
-              children: [
-                WidgetSpan(
-                  child: GestureDetector(
-                    onTap: onRightButtonPressed,
-                    child: Text(
-                      rightButtonText,
-                      style: const TextStyle(
-                        color: Color(0xFF027ba1),
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+          if (rightText != null)
+            Expanded(
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: Text(
+                  rightText!,
+                  style: const TextStyle(
+                    color: Color(0xFF191929),
+                    fontSize: 14,
                   ),
                 ),
-              ],
+              ),
             ),
-          ),
         ],
       ),
     );
