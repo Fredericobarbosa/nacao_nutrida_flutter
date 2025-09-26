@@ -33,18 +33,6 @@ class Header extends StatelessWidget {
             ),
           Row(
             children: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pushNamed('/');
-                },
-                child: const Text(
-                  'Página Inicial',
-                  style: TextStyle(
-                    color: Color(0xFF027ba1),
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
               const SizedBox(width: 8),
               TextButton(
                 onPressed: () {
@@ -75,38 +63,14 @@ class Header extends StatelessWidget {
               TextButton(
                 onPressed: () {
                   // Ajustes: pode ser ajustado para a rota correta
-                  Navigator.of(context).pushNamed('/ajustes');
+                  Navigator.of(context).pushNamed('/login');
                 },
                 child: const Text(
-                  'Ajustes',
+                  'Login',
                   style: TextStyle(
                     color: Color(0xFF027ba1),
                     fontWeight: FontWeight.bold,
                   ),
-                ),
-              ),
-              const SizedBox(width: 16),
-              RichText(
-                text: TextSpan(
-                  text: '$rightText ',
-                  style: const TextStyle(
-                    color: Color(0xFF8d8d8d),
-                    fontSize: 14,
-                  ),
-                  children: [
-                    WidgetSpan(
-                      child: GestureDetector(
-                        onTap: onRightButtonPressed,
-                        child: Text(
-                          rightButtonText,
-                          style: const TextStyle(
-                            color: Color(0xFF027ba1),
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
                 ),
               ),
             ],

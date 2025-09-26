@@ -48,7 +48,7 @@ class LeftSidebar extends StatelessWidget {
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFffc436),
-                        foregroundColor: const Color(0xFF191929),
+                        foregroundColor: const Color(0xFFFFFFFF),
                         textStyle: const TextStyle(fontSize: 12),
                         padding: const EdgeInsets.symmetric(
                           horizontal: 12,
@@ -64,7 +64,8 @@ class LeftSidebar extends StatelessWidget {
                       },
                       style: OutlinedButton.styleFrom(
                         side: const BorderSide(color: Color(0xFF769fcd)),
-                        foregroundColor: const Color(0xFF769fcd),
+                        backgroundColor: const Color(0xFF769fcd),
+                        foregroundColor: const Color(0xFFFFFFFF),
                         textStyle: const TextStyle(fontSize: 12),
                         padding: const EdgeInsets.symmetric(
                           horizontal: 12,

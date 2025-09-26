@@ -13,13 +13,35 @@ class DescobrirPage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Header(
-              leftText: '',
-              rightText: 'Não tem conta?',
-              rightButtonText: 'Cadastre-se',
-              onRightButtonPressed: () {
-                Navigator.of(context).pushNamed('/cadastro-usuario');
-              },
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(
+                  height: 70, // mesma altura do header
+                  child: Container(
+                    color: Colors.white,
+                    child: IconButton(
+                      icon: const Icon(
+                        Icons.arrow_back,
+                        color: Color(0xFF027ba1),
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Header(
+                    leftText: '',
+                    rightText: 'Não tem conta?',
+                    rightButtonText: 'Cadastre-se',
+                    onRightButtonPressed: () {
+                      Navigator.of(context).pushNamed('/cadastro-usuario');
+                    },
+                  ),
+                ),
+              ],
             ),
             Padding(padding: const EdgeInsets.all(24), child: CenterContent()),
             const Footer(),
