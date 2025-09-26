@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../components/header_inicial.dart';
+import '../components/header.dart';
 import '../components/footer.dart';
 import '../components/left_sidebar.dart';
 
@@ -13,8 +13,12 @@ class PaginaInicial extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            HeaderInicial(
-              rightText: 'Campanhas • Criar • Ajustes',
+            Header(
+              rightText: '',
+              rightButtonText: 'Login',
+              onRightButtonPressed: () {
+                Navigator.of(context).pushNamed('/login');
+              },
             ),
             Padding(padding: const EdgeInsets.all(24), child: LeftSidebar()),
             const Footer(),
