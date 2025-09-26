@@ -118,7 +118,7 @@ class CenterContent extends StatelessWidget {
                               onTap: () {
                                 Navigator.of(
                                   context,
-                                ).pushNamed('/cadastrar-pedido');
+                                ).pushNamed('/cadastrar-campanha');
                               },
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
