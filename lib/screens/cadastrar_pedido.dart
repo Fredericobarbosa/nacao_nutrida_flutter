@@ -2,49 +2,91 @@ import 'package:flutter/material.dart';
 import '../components/header.dart';
 import '../components/cadastro_campanha.dart';
 
-class CadastrarPedidoPage extends StatelessWidget {
+class CadastrarPedidoPage extends StatefulWidget {
   const CadastrarPedidoPage({super.key});
+
+  @override
+  State<CadastrarPedidoPage> createState() => _CadastrarPedidoPageState();
+}
+
+class _CadastrarPedidoPageState extends State<CadastrarPedidoPage> {
+  late Stopwatch _stopwatch;
+  int? _tempoCarregamento;
+  bool _carregou = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _stopwatch = Stopwatch()..start();
+    Future.delayed(const Duration(seconds: 1), () {
+      setState(() {
+        _carregou = true;
+        _stopwatch.stop();
+        _tempoCarregamento = _stopwatch.elapsedMilliseconds;
+      });
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_tempoCarregamento == null) {
+      _stopwatch.stop();
+      setState(() {
+        _tempoCarregamento = _stopwatch.elapsedMilliseconds;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFf6f6f6),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Container(
-                  color: Colors.white,
-                  child: IconButton(
-                    icon: const Icon(
-                      Icons.arrow_back,
-                      color: Color(0xFF027ba1),
+      body: !_carregou
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        color: Colors.white,
+                        child: IconButton(
+                          icon: const Icon(
+                            Icons.arrow_back,
+                            color: Color(0xFF027ba1),
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ),
+                      Expanded(
+                        child: Header(
+                          leftText: null,
+                          rightText: 'Não tem conta?',
+                          rightButtonText: 'Cadastre-se',
+                          onRightButtonPressed: () {
+                            Navigator.of(context).pushNamed('/cadastro-usuario');
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (_tempoCarregamento != null)
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'Tempo de carregamento: ${_tempoCarregamento!.toInt()} ms',
+                        style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+                      ),
                     ),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
+                  Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: CadastroCampanhaForm(),
                   ),
-                ),
-                Expanded(
-                  child: Header(
-                    leftText: null,
-                    rightText: 'Não tem conta?',
-                    rightButtonText: 'Cadastre-se',
-                    onRightButtonPressed: () {
-                      Navigator.of(context).pushNamed('/cadastro-usuario');
-                    },
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(24),
-              child: CadastroCampanhaForm(),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }
