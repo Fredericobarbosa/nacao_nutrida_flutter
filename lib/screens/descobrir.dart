@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../components/header_descobrir.dart';
+import '../components/header.dart';
 import '../components/footer.dart';
 import '../components/center_content.dart';
 
@@ -13,8 +13,13 @@ class DescobrirPage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            HeaderDescobrir(
-             rightText: 'Campanhas • Criar • Ajustes',
+            Header(
+              leftText: '',
+              rightText: 'Não tem conta?',
+              rightButtonText: 'Cadastre-se',
+              onRightButtonPressed: () {
+                Navigator.of(context).pushNamed('/cadastro-usuario');
+              },
             ),
             Padding(padding: const EdgeInsets.all(24), child: CenterContent()),
             const Footer(),
