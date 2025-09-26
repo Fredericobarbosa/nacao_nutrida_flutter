@@ -26,19 +26,18 @@ class CenterContent extends StatelessWidget {
                 const SizedBox(height: 8),
                 const Text(
                   'Encontre organizações que precisam de sua ajuda',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                  ),
+                  style: TextStyle(color: Colors.white, fontSize: 14),
                 ),
                 const SizedBox(height: 16),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.of(context).pushNamed('/descobrir');
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFffc436),
                     foregroundColor: const Color(0xFF191929),
                   ),
-                  child: const Text('Procurar'),
+                  child: const Text('Começar agora'),
                 ),
               ],
             ),
@@ -51,7 +50,7 @@ class CenterContent extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Pedidos mais recentes',
+              'Campanhas Existentes',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -68,18 +67,27 @@ class CenterContent extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        width: 120,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: Colors.grey[300],
+                      Flexible(
+                        flex: 0,
+                        child: Container(
+                          width: MediaQuery.of(context).size.width < 400
+                              ? 60
+                              : 100,
+                          height: 60,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: Colors.grey[300],
+                          ),
+                          child: const Icon(
+                            Icons.image,
+                            size: 32,
+                            color: Colors.grey,
+                          ),
                         ),
-                        child: const Icon(Icons.image,
-                            size: 40, color: Colors.grey),
                       ),
-                      const SizedBox(width: 16),
+                      const SizedBox(width: 12),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -90,6 +98,9 @@ class CenterContent extends StatelessWidget {
                                 fontWeight: FontWeight.w500,
                                 color: Color(0xFF191929),
                               ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              softWrap: true,
                             ),
                             const SizedBox(height: 4),
                             const Text(
@@ -98,20 +109,32 @@ class CenterContent extends StatelessWidget {
                                 color: Color(0xFF8d8d8d),
                                 fontSize: 12,
                               ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              softWrap: true,
                             ),
                             const SizedBox(height: 8),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF027ba1),
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              child: const Text(
-                                'Ver detalhes',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.of(
+                                  context,
+                                ).pushNamed('/cadastrar-pedido');
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF027ba1),
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: const Text(
+                                  'Ver detalhes',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                  ),
                                 ),
                               ),
                             ),
@@ -142,7 +165,9 @@ class CenterContent extends StatelessWidget {
                 const Text('...', style: TextStyle(color: Color(0xFF8d8d8d))),
                 const SizedBox(width: 8),
                 OutlinedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.of(context).pushNamed('/descobrir');
+                  },
                   child: const Text('Seguinte →'),
                 ),
               ],
