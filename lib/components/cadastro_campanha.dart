@@ -84,7 +84,6 @@ class _CadastroCampanhaFormState extends State<CadastroCampanhaForm> {
                     children: [
                       Expanded(
                         child: DropdownButtonFormField<String>(
-                          value: alimento['tipo'],
                           items: ['Sólido', 'Líquido']
                               .map(
                                 (tipo) => DropdownMenuItem(
@@ -129,7 +128,6 @@ class _CadastroCampanhaFormState extends State<CadastroCampanhaForm> {
                       const SizedBox(width: 8),
                       Expanded(
                         child: DropdownButtonFormField<String>(
-                          value: alimento['unidade'],
                           items: ['Kg', 'L', 'Unidade']
                               .map(
                                 (u) =>

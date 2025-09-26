@@ -1,10 +1,10 @@
-version: 2
+esversion: 2
 updates:
   # Flutter/Dart dependencies
   - package-ecosystem: "pub"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
       day: "monday"
       time: "09:00"
     commit-message:
