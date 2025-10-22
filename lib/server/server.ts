@@ -7,7 +7,8 @@ import doacaoRouter from "./src/routes/doacao.routes";
 import localidadeRouter from "./config/routes/localidade.router";
 import cors from "cors";
 
-dotenv.config({ path: "../.env" });
+// Carrega o .env do diretório do servidor (lib/server/.env)
+dotenv.config({ path: "./.env" });
 
 const app = express();
 app.use(

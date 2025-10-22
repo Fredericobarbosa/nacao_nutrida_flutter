@@ -14,6 +14,9 @@ class CadastroUsuarioForm extends StatefulWidget {
 
 class _CadastroUsuarioFormState extends State<CadastroUsuarioForm> {
   bool isPessoaFisica = true;
+  List<Map<String, dynamic>> _estadosCidades = [];
+  String? _selectedEstado;
+  String? _selectedCidade;
   final _formKey = GlobalKey<FormState>();
   final _nomeController = TextEditingController();
   final _cpfCnpjController = TextEditingController();
@@ -37,10 +40,7 @@ class _CadastroUsuarioFormState extends State<CadastroUsuarioForm> {
     mask: '(##) #####-####',
     filter: {"#": RegExp(r'[0-9]')},
   );
-  final _dateMask = MaskTextInputFormatter(
-    mask: '##/##/####',
-    filter: {"#": RegExp(r'[0-9]')},
-  );
+  // usamos DatePicker em vez de máscara para data de nascimento
 
   @override
   Widget build(BuildContext context) {
@@ -135,7 +135,10 @@ class _CadastroUsuarioFormState extends State<CadastroUsuarioForm> {
                 _buildFormField(
                   'Data de nascimento',
                   controller: _nascimentoController,
-                  inputFormatters: [_dateMask],
+                  // tornamos somente leitura e abrimos o date picker
+                  readOnly: true,
+                  onTap: _selectDate,
+                  suffixIcon: const Icon(Icons.calendar_today, size: 18),
                 ),
               if (isPessoaFisica) const SizedBox(height: 16),
               _buildFormField(
@@ -144,9 +147,72 @@ class _CadastroUsuarioFormState extends State<CadastroUsuarioForm> {
                 inputFormatters: [_celMask],
               ),
               const SizedBox(height: 16),
-              _buildFormField('Cidade', controller: _cidadeController),
+              // Estado e Cidade como dropdowns preenchidos via API
               const SizedBox(height: 16),
-              _buildFormField('Estado', controller: _estadoController),
+              DropdownButtonFormField<String>(
+                value:
+                    _selectedEstado ??
+                    (_estadosCidades.isNotEmpty
+                        ? _estadosCidades[0]['sg_estado'] as String
+                        : null),
+                items: _estadosCidades
+                    .map(
+                      (e) => DropdownMenuItem<String>(
+                        value: e['sg_estado'] as String,
+                        child: Text(e['sg_estado'] as String),
+                      ),
+                    )
+                    .toList(),
+                onChanged: (v) {
+                  setState(() {
+                    _selectedEstado = v;
+                    // quando muda o estado, atualiza cidade e limpa controller
+                    _selectedCidade = null;
+                    _cidadeController.text = '';
+                  });
+                },
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Estado',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty)
+                    return 'Campo obrigatório';
+                  return null;
+                },
+              ),
+              const SizedBox(height: 8),
+              DropdownButtonFormField<String>(
+                value: _selectedCidade,
+                items:
+                    (_estadosCidades.firstWhere(
+                              (e) => e['sg_estado'] == _selectedEstado,
+                              orElse: () => {'cidades': <String>[]},
+                            )['cidades']
+                            as List<dynamic>)
+                        .map(
+                          (c) => DropdownMenuItem<String>(
+                            value: c,
+                            child: Text(c),
+                          ),
+                        )
+                        .toList(),
+                onChanged: (v) {
+                  setState(() {
+                    _selectedCidade = v;
+                    _cidadeController.text = v ?? '';
+                  });
+                },
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Cidade',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty)
+                    return 'Campo obrigatório';
+                  return null;
+                },
+              ),
               const SizedBox(height: 16),
               _buildFormField(
                 'Senha',
@@ -181,6 +247,32 @@ class _CadastroUsuarioFormState extends State<CadastroUsuarioForm> {
     );
   }
 
+  @override
+  void initState() {
+    super.initState();
+    _fetchEstadosCidades();
+  }
+
+  Future<void> _fetchEstadosCidades() async {
+    try {
+      final api = ApiService(baseUrl: ApiConfig.baseUrlAndroid);
+      final resp = await api.get('/estadosCidades');
+      if (resp.statusCode == 200) {
+        final data = jsonDecode(resp.body) as List<dynamic>;
+        setState(() {
+          _estadosCidades = data.map((e) => e as Map<String, dynamic>).toList();
+          if (_estadosCidades.isNotEmpty) {
+            _selectedEstado = _estadosCidades[0]['sg_estado'] as String;
+          }
+        });
+      } else {
+        print('Falha ao buscar estadosCidades: ' + resp.body);
+      }
+    } catch (e) {
+      print('Erro ao buscar estadosCidades: $e');
+    }
+  }
+
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
     final senha = _senhaController.text;
@@ -195,19 +287,54 @@ class _CadastroUsuarioFormState extends State<CadastroUsuarioForm> {
     setState(() => _loading = true);
     final api = ApiService(baseUrl: ApiConfig.baseUrlAndroid);
 
+    // Normaliza cpf/cnpj: envia somente dígitos para o backend
+    String? cpfDigits;
+    String? cnpjDigits;
+    final rawCpfCnpj = _cpfCnpjController.text.trim();
+    final onlyDigits = rawCpfCnpj.replaceAll(RegExp(r'[^0-9]'), '');
+    if (isPessoaFisica) cpfDigits = onlyDigits;
+    if (!isPessoaFisica) cnpjDigits = onlyDigits;
+
+    final estadoToSend =
+        _selectedEstado ??
+        (_estadosCidades.isNotEmpty
+            ? _estadosCidades[0]['sg_estado'] as String
+            : _estadoController.text.trim());
+    final cidadeToSend = _selectedCidade ?? _cidadeController.text.trim();
+
+    // Converte data dd/MM/yyyy para ISO-8601 (aceito pelo Prisma)
+    String? nascimentoIso;
+    if (isPessoaFisica && _nascimentoController.text.trim().isNotEmpty) {
+      final parts = _nascimentoController.text.trim().split('/');
+      if (parts.length == 3) {
+        final d = int.tryParse(parts[0]);
+        final m = int.tryParse(parts[1]);
+        final y = int.tryParse(parts[2]);
+        if (d != null && m != null && y != null) {
+          try {
+            final dt = DateTime(y, m, d);
+            // envia data completa em ISO-8601 com timezone UTC (ex: 1960-07-14T00:00:00.000Z)
+            nascimentoIso = dt.toUtc().toIso8601String();
+          } catch (_) {
+            nascimentoIso = null;
+          }
+        }
+      }
+    }
+
     final userInfos = <String, dynamic>{
       'tipo_usuario': isPessoaFisica ? 'pf' : 'pj',
       'nm_usuario': _nomeController.text.trim(),
       'cd_email_usuario': _emailController.text.trim(),
       'nr_celular_usuario': _celularController.text.trim(),
       'cd_senha_usuario': senha,
-      'sg_estado_usuario': _estadoController.text.trim(),
-      'nm_cidade_usuario': _cidadeController.text.trim(),
+      'sg_estado_usuario': estadoToSend,
+      'nm_cidade_usuario': cidadeToSend,
       // Adicionamos apenas quando houver valor (evita enviar null ao backend)
-      if (isPessoaFisica)
-        'dt_nascimento_usuario': _nascimentoController.text.trim(),
-      if (isPessoaFisica) 'ch_cpf_usuario': _cpfCnpjController.text.trim(),
-      if (!isPessoaFisica) 'ch_cnpj_usuario': _cpfCnpjController.text.trim(),
+      if (isPessoaFisica && nascimentoIso != null)
+        'dt_nascimento_usuario': nascimentoIso,
+      if (isPessoaFisica) 'ch_cpf_usuario': cpfDigits,
+      if (!isPessoaFisica) 'ch_cnpj_usuario': cnpjDigits,
     };
 
     try {
@@ -274,6 +401,9 @@ class _CadastroUsuarioFormState extends State<CadastroUsuarioForm> {
     TextEditingController? controller,
     List<TextInputFormatter>? inputFormatters,
     String? hintText, // novo parâmetro
+    bool readOnly = false,
+    VoidCallback? onTap,
+    Widget? suffixIcon,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -286,12 +416,15 @@ class _CadastroUsuarioFormState extends State<CadastroUsuarioForm> {
         TextFormField(
           controller: controller,
           inputFormatters: inputFormatters,
+          readOnly: readOnly,
+          onTap: onTap,
           obscureText: isPassword,
           keyboardType: isEmail
               ? TextInputType.emailAddress
               : TextInputType.text,
           decoration: InputDecoration(
             hintText: hintText,
+            suffixIcon: suffixIcon,
             border: const OutlineInputBorder(),
           ),
           validator: (value) {
@@ -350,5 +483,29 @@ class _CadastroUsuarioFormState extends State<CadastroUsuarioForm> {
         ),
       ],
     );
+  }
+
+  Future<void> _selectDate() async {
+    try {
+      final now = DateTime.now();
+      final initial = DateTime(now.year - 20, now.month, now.day);
+      final first = DateTime(1900);
+      final last = now;
+      final picked = await showDatePicker(
+        context: context,
+        initialDate: initial,
+        firstDate: first,
+        lastDate: last,
+      );
+      if (picked != null) {
+        final formatted =
+            '${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}';
+        _nascimentoController.text = formatted;
+        setState(() {});
+      }
+    } catch (e) {
+      // caso ocorra algo inesperado, apenas logamos
+      print('Erro ao selecionar data: $e');
+    }
   }
 }

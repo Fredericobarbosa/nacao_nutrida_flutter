@@ -35,9 +35,10 @@ class ApiService {
 
   // Exemplo: login que salva token
   Future<bool> login(String email, String password) async {
-    final resp = await post('/usuario/login', {
-      'email': email,
-      'senha': password,
+    // Ajuste: rota e campos conforme schemas do servidor
+    final resp = await post('/usuarioLogin', {
+      'user_email': email,
+      'user_password': password,
     });
     if (resp.statusCode == 200) {
       final data = jsonDecode(resp.body);
