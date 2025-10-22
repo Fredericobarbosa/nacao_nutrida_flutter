@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
         '/cadastro-usuario': (context) => const CadastroUsuarioPage(),
         '/cadastrar-campanha': (context) => const CadastrarCampanhaPage(),
         '/analytics': (context) => const AnalyticsDashboard(),
-        // '/perfil': (context) => ProfileScreen(), 
+        // '/perfil': (context) => ProfileScreen(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/detalhes-campanha') {

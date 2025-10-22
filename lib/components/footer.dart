@@ -11,9 +11,7 @@ class Footer extends StatelessWidget {
     return Container(
       color: const Color(0xFF191929),
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-      child: isMobile
-          ? _buildMobileLayout()
-          : _buildDesktopLayout(),
+      child: isMobile ? _buildMobileLayout() : _buildDesktopLayout(),
     );
   }
 
@@ -26,7 +24,13 @@ class Footer extends StatelessWidget {
         // Coluna: Logo e nome
         Row(
           children: [
-            Image.asset('assets/logo.png', width: 40, height: 40, color: const Color(0xFF191929), colorBlendMode: BlendMode.srcIn),
+            Image.asset(
+              'assets/logo.png',
+              width: 40,
+              height: 40,
+              color: const Color(0xFF191929),
+              colorBlendMode: BlendMode.srcIn,
+            ),
             const SizedBox(width: 8),
             const Text(
               'Nação Nutrida',
@@ -152,7 +156,10 @@ class Footer extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         const Text('Fale conosco', style: TextStyle(color: Colors.white70)),
-        const Text('Dúvidas frequentes', style: TextStyle(color: Colors.white70)),
+        const Text(
+          'Dúvidas frequentes',
+          style: TextStyle(color: Colors.white70),
+        ),
         const Text('Atualizações', style: TextStyle(color: Colors.white70)),
 
         const SizedBox(height: 24),
@@ -185,14 +192,9 @@ class Footer extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white.withAlpha(25),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: Colors.white.withAlpha(50),
-          width: 1,
-        ),
+        border: Border.all(color: Colors.white.withAlpha(50), width: 1),
       ),
-      child: Center(
-        child: FaIcon(icon, size: 18, color: Colors.white70),
-      ),
+      child: Center(child: FaIcon(icon, size: 18, color: Colors.white70)),
     );
   }
 }

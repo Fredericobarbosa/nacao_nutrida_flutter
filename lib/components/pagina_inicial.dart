@@ -99,7 +99,7 @@ class LeftSidebar extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 _buildActionItem(
-                  Icons.inventory_2_outlined ,
+                  Icons.inventory_2_outlined,
                   'Criar uma campanha para',
                   'sua ação social',
                 ),
