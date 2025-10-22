@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../components/header.dart';
@@ -5,6 +6,8 @@ import '../components/footer.dart';
 import '../models/campaign.dart';
 import '../models/auth_manager.dart';
 import '../services/analytics_service.dart';
+import '../services/api_service.dart';
+import '../config/api.dart';
 
 class DoarAlimentosPage extends StatefulWidget {
   final Campaign campanha;
@@ -17,46 +20,14 @@ class DoarAlimentosPage extends StatefulWidget {
 
 class _DoarAlimentosPageState extends State<DoarAlimentosPage> {
   final Map<String, int> _doacoes = {};
-  late Stopwatch _stopwatch;
-  int? _tempoCarregamento;
 
   @override
   void initState() {
     super.initState();
-    _stopwatch = Stopwatch()..start();
+    AnalyticsService().trackPageView('Doar Alimentos');
     // Inicializa o mapa de doações com os alimentos da campanha
     for (String alimento in widget.campanha.tiposAlimento) {
       _doacoes[alimento] = 0;
-    }
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (_tempoCarregamento == null) {
-      _stopwatch.stop();
-      int loadTime = _stopwatch.elapsedMilliseconds;
-
-      // Tracking analytics
-      AnalyticsService().trackPageView('Doar Alimentos');
-      AnalyticsService().trackPageLoadTime('Doar Alimentos', loadTime);
-
-      // Track heavy page if load time > 1000ms
-      if (loadTime > 1000) {
-        AnalyticsService().trackHeavyPageMetrics(
-          'Doar Alimentos',
-          loadTimeMs: loadTime,
-          heavyOperations: [
-            'Loading donation form',
-            'Loading campaign data',
-            'Initializing food types',
-          ],
-        );
-      }
-
-      setState(() {
-        _tempoCarregamento = loadTime;
-      });
     }
   }
 
@@ -503,7 +474,10 @@ class _DoarAlimentosPageState extends State<DoarAlimentosPage> {
       return;
     }
 
-    // Simular confirmação da doação
+    // Antes de confirmar, efetua o POST real para /doacoes
+    _postDoacao();
+
+    // Simular confirmação local da doação (dialog de sucesso exibido após o POST se necessário)
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -543,5 +517,114 @@ class _DoarAlimentosPageState extends State<DoarAlimentosPage> {
         );
       },
     );
+  }
+
+  Future<void> _postDoacao() async {
+    final api = ApiService(baseUrl: ApiConfig.baseUrlAndroid);
+
+    try {
+      // 1) Buscar perfil do usuário para obter o ID
+      final perfilResp = await api.get('/usuario/perfil');
+      if (perfilResp.statusCode != 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Não foi possível obter perfil do usuário.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+      final perfil = jsonDecode(perfilResp.body);
+      final usuarioId = perfil['_id'] ?? perfil['id'];
+      if (usuarioId == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('ID do usuário inválido.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      // 2) Garantir que temos os alimento_ids: buscar campanha completa
+      final campanhaResp = await api.get('/campanhas/${widget.campanha.id}');
+      if (campanhaResp.statusCode != 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Não foi possível obter dados da campanha.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+      final campanhaJson = jsonDecode(campanhaResp.body);
+      final alimentosCampanha = campanhaJson['alimentos_campanha'] as List?;
+      final Map<String, String> nomeParaId = {};
+      if (alimentosCampanha != null) {
+        for (final a in alimentosCampanha) {
+          final id = a['alimento_id'] ?? a['id'];
+          final nome = a['nm_alimento'] ?? a['nome'] ?? id;
+          if (id != null) nomeParaId[nome.toString()] = id.toString();
+        }
+      }
+
+      // 3) Montar lista alimentos_doacao usando ids
+      final alimentosDoacao = <Map<String, dynamic>>[];
+      _doacoes.forEach((nome, qty) {
+        if (qty > 0) {
+          final alimentoId = nomeParaId[nome];
+          if (alimentoId == null) {
+            // não temos id para esse alimento -> aviso e aborta
+            throw Exception('ID do alimento não encontrado para $nome');
+          }
+          alimentosDoacao.add({
+            'alimento_id': alimentoId,
+            'qt_alimento_doacao': qty,
+          });
+        }
+      });
+
+      if (alimentosDoacao.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Selecione ao menos um alimento para doar.'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+        return;
+      }
+
+      final payload = {
+        'infos_doacao': {
+          'usuario_doacao': usuarioId.toString(),
+          'cd_campanha_doacao': widget.campanha.id,
+        },
+        'alimentos_doacao': alimentosDoacao,
+      };
+
+      final resp = await api.post('/doacoes', payload);
+      if (resp.statusCode == 201 || resp.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Doação registrada com sucesso!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erro ao registrar doação: ${resp.statusCode}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Falha ao registrar doação: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 }

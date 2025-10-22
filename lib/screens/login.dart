@@ -11,20 +11,15 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  late Stopwatch _stopwatch;
-  int? _tempoCarregamento;
-
   bool _carregou = false;
 
   @override
   void initState() {
     super.initState();
-    _stopwatch = Stopwatch()..start();
+    AnalyticsService().trackPageView('Login');
     Future.delayed(const Duration(seconds: 1), () {
       setState(() {
         _carregou = true;
-        _stopwatch.stop();
-        _tempoCarregamento = _stopwatch.elapsedMilliseconds;
       });
     });
   }
@@ -32,27 +27,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (_tempoCarregamento == null) {
-      _stopwatch.stop();
-      int loadTime = _stopwatch.elapsedMilliseconds;
-
-      // Tracking analytics
-      AnalyticsService().trackPageView('Login');
-      AnalyticsService().trackPageLoadTime('Login', loadTime);
-
-      // Track heavy page if load time > 1000ms
-      if (loadTime > 1000) {
-        AnalyticsService().trackHeavyPageMetrics(
-          'Login',
-          loadTimeMs: loadTime,
-          heavyOperations: ['Loading header', 'Loading login form'],
-        );
-      }
-
-      setState(() {
-        _tempoCarregamento = loadTime;
-      });
-    }
+    // analytics page view already tracked in initState
   }
 
   @override
@@ -71,17 +46,7 @@ class _LoginPageState extends State<LoginPage> {
                       Navigator.of(context).pushNamed('/cadastro-usuario');
                     },
                   ),
-                  if (_tempoCarregamento != null)
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        'Tempo de carregamento: ${_tempoCarregamento!.toInt()} ms',
-                        style: const TextStyle(
-                          color: Colors.green,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
+                  const SizedBox.shrink(),
                   Padding(
                     padding: const EdgeInsets.all(24),
                     child: LoginForm(),

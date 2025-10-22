@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../components/header.dart';
 import '../components/footer.dart';
-import '../components/left_sidebar.dart';
+import '../components/pagina_inicial.dart';
 import '../services/analytics_service.dart';
 
 class PaginaInicial extends StatefulWidget {
@@ -12,39 +12,15 @@ class PaginaInicial extends StatefulWidget {
 }
 
 class _PaginaInicialState extends State<PaginaInicial> {
-  late Stopwatch _stopwatch;
-  int? _tempoCarregamento;
-
   @override
   void initState() {
     super.initState();
-    _stopwatch = Stopwatch()..start();
+    AnalyticsService().trackPageView('pagina_inicial');
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (_tempoCarregamento == null) {
-      _stopwatch.stop();
-      final loadTime = _stopwatch.elapsedMilliseconds;
-
-      // Coleta métricas da página inicial
-      AnalyticsService().trackPageView('pagina_inicial');
-      AnalyticsService().trackPageLoadTime('pagina_inicial', loadTime);
-
-      // Se demorou mais de 1 segundo, considera página pesada
-      if (loadTime > 1000) {
-        AnalyticsService().trackHeavyPageMetrics(
-          'pagina_inicial',
-          loadTimeMs: loadTime,
-          heavyOperations: ['Loading sidebar', 'Loading header'],
-        );
-      }
-
-      setState(() {
-        _tempoCarregamento = loadTime;
-      });
-    }
   }
 
   @override
@@ -62,17 +38,7 @@ class _PaginaInicialState extends State<PaginaInicial> {
                 Navigator.of(context).pushNamed('/login');
               },
             ),
-            if (_tempoCarregamento != null)
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  'Tempo de carregamento: ${_tempoCarregamento!.toInt()} ms',
-                  style: const TextStyle(
-                    color: Colors.green,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
+            const SizedBox.shrink(),
             Padding(padding: const EdgeInsets.all(24), child: LeftSidebar()),
             const Footer(),
           ],

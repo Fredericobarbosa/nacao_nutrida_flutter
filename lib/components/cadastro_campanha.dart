@@ -1,4 +1,7 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import '../services/api_service.dart';
+import '../config/api.dart';
 
 class CadastroCampanhaForm extends StatefulWidget {
   const CadastroCampanhaForm({super.key});
@@ -232,10 +235,7 @@ class _CadastroCampanhaFormState extends State<CadastroCampanhaForm> {
             ),
             const SizedBox(height: 24),
             ElevatedButton(
-              onPressed: () {
-                // Aqui você pode salvar os dados
-                Navigator.of(context).pushNamed('/descobrir');
-              },
+              onPressed: _criarCampanha,
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF064789),
                 foregroundColor: Colors.white,
@@ -247,6 +247,92 @@ class _CadastroCampanhaFormState extends State<CadastroCampanhaForm> {
         ),
       ),
     );
+  }
+
+  Future<void> _criarCampanha() async {
+    final api = ApiService(baseUrl: ApiConfig.baseUrlAndroid);
+
+    // Validações mínimas
+    if (tituloController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Título é obrigatório')));
+      return;
+    }
+    if (dataEncerramentoController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Data de encerramento é obrigatória')),
+      );
+      return;
+    }
+
+    try {
+      // Obter usuário logado para pegar id
+      final perfilResp = await api.get('/usuario/perfil');
+      if (perfilResp.statusCode != 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Faça login para criar uma campanha'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+        return;
+      }
+      final perfil = jsonDecode(perfilResp.body);
+      final usuarioId = perfil['_id'] ?? perfil['id'];
+      if (usuarioId == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('ID do usuário não encontrado'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      final alimentosPayload = alimentos.map((a) {
+        return {
+          'id': a['nome'] ?? '', // ideal seria mapear para id real do alimento
+          'qt_alimento_meta':
+              int.tryParse((a['quantidade'] ?? '0').toString()) ?? 0,
+        };
+      }).toList();
+
+      final payload = {
+        'infos_campanha': {
+          'usuario_id': usuarioId.toString(),
+          'nm_titulo_campanha': tituloController.text.trim(),
+          'dt_encerramento_campanha': dataEncerramentoController.text.trim(),
+          'nm_cidade_campanha': cidadeController.text.trim(),
+          'sg_estado_campanha': estadoController.text.trim(),
+          'ds_acao_campanha': descricaoController.text.trim(),
+          'cd_imagem_campanha': imagens.isNotEmpty ? imagens.first : null,
+        },
+        'alimentos_campanha': alimentosPayload,
+      };
+
+      final resp = await api.post('/campanhas', payload);
+      if (resp.statusCode == 201 || resp.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Campanha criada com sucesso!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        Navigator.of(context).pushNamed('/descobrir');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erro ao criar campanha: ${resp.statusCode}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro: $e'), backgroundColor: Colors.red),
+      );
+    }
   }
 
   Widget _buildFormField(

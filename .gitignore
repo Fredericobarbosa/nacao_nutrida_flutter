@@ -46,3 +46,8 @@ app.*.map.json
 
 # Documentação local - não enviar para repositório
 DEPLOYMENT_ANALYTICS.md
+
+# Environment files
+.env
+**/.env
+.env.local

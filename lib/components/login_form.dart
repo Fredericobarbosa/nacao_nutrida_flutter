@@ -1,9 +1,61 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/auth_manager.dart';
+import '../services/api_service.dart';
+import '../config/api.dart';
+import 'package:flutter/services.dart';
 
-class LoginForm extends StatelessWidget {
+class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
+
+  @override
+  State<LoginForm> createState() => _LoginFormState();
+}
+
+class _LoginFormState extends State<LoginForm> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _loading = false;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Preencha email e senha')));
+      return;
+    }
+
+    setState(() => _loading = true);
+    final api = ApiService(baseUrl: ApiConfig.baseUrlAndroid);
+    try {
+      final ok = await api.login(email, password);
+      if (ok) {
+        final authManager = Provider.of<AuthManager>(context, listen: false);
+        // Caso o backend não retorne dados do usuário, usamos um login simplificado
+        authManager.login(name: email.split('@').first, email: email);
+        Navigator.of(context).pushNamed('/descobrir');
+      } else {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Credenciais inválidas')));
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Erro ao conectar: $e')));
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +74,7 @@ class LoginForm extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             TextFormField(
+              controller: _emailController,
               decoration: const InputDecoration(
                 labelText: 'Email',
                 labelStyle: TextStyle(color: Color(0xFF191929), fontSize: 14),
@@ -30,6 +83,7 @@ class LoginForm extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             TextFormField(
+              controller: _passwordController,
               decoration: const InputDecoration(
                 labelText: 'Senha',
                 labelStyle: TextStyle(color: Color(0xFF191929), fontSize: 14),
@@ -50,24 +104,26 @@ class LoginForm extends StatelessWidget {
               style: TextStyle(color: Color(0xFF8d8d8d), fontSize: 12),
             ),
             const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                // Fazer login com dados de teste
-                final authManager = Provider.of<AuthManager>(
-                  context,
-                  listen: false,
-                );
-                authManager.loginWithTestUser();
-
-                // Navegar para a tela de descobrir
-                Navigator.of(context).pushNamed('/descobrir');
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF064789),
-                foregroundColor: Colors.white,
-                minimumSize: const Size(double.infinity, 48),
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: ElevatedButton(
+                onPressed: _loading ? null : _submit,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF064789),
+                  foregroundColor: Colors.white,
+                ),
+                child: _loading
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : const Text('Entrar'),
               ),
-              child: const Text('Entrar'),
             ),
           ],
         ),

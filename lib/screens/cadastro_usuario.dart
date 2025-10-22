@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../components/header_cadastro_usuario.dart';
 import '../components/cadastro_usuario_form.dart';
+import '../services/analytics_service.dart';
 
 class CadastroUsuarioPage extends StatefulWidget {
   const CadastroUsuarioPage({super.key});
@@ -10,20 +11,15 @@ class CadastroUsuarioPage extends StatefulWidget {
 }
 
 class _CadastroUsuarioPageState extends State<CadastroUsuarioPage> {
-  late Stopwatch _stopwatch;
-  int? _tempoCarregamento;
-
   bool _carregou = false;
 
   @override
   void initState() {
     super.initState();
-    _stopwatch = Stopwatch()..start();
+    AnalyticsService().trackPageView('CadastroUsuario');
     Future.delayed(const Duration(seconds: 1), () {
       setState(() {
         _carregou = true;
-        _stopwatch.stop();
-        _tempoCarregamento = _stopwatch.elapsedMilliseconds;
       });
     });
   }
@@ -31,12 +27,7 @@ class _CadastroUsuarioPageState extends State<CadastroUsuarioPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (_tempoCarregamento == null) {
-      _stopwatch.stop();
-      setState(() {
-        _tempoCarregamento = _stopwatch.elapsedMilliseconds;
-      });
-    }
+    // analytics.page view tracked in initState
   }
 
   @override
@@ -50,22 +41,12 @@ class _CadastroUsuarioPageState extends State<CadastroUsuarioPage> {
                 children: [
                   HeaderCadastroUsuario(
                     rightText: 'Já tem conta?',
-                    rightButtonText: 'Entrar',
+                    rightButtonText: 'Faça o login',
                     onRightButtonPressed: () {
                       Navigator.of(context).pushNamed('/login');
                     },
                   ),
-                  if (_tempoCarregamento != null)
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        'Tempo de carregamento: ${_tempoCarregamento!.toInt()} ms',
-                        style: const TextStyle(
-                          color: Colors.green,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
+                  const SizedBox.shrink(),
                   Padding(
                     padding: const EdgeInsets.all(24),
                     child: CadastroUsuarioForm(),

@@ -39,6 +39,7 @@ dependencies:
   font_awesome_flutter: ^10.6.0
   http: ^1.1.0
   shared_preferences: ^2.3.2
+  mask_text_input_formatter: ^2.4.0
 
 dev_dependencies:
   flutter_test:
