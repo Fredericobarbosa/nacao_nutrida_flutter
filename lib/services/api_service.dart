@@ -33,6 +33,15 @@ class ApiService {
         .timeout(const Duration(seconds: 10));
   }
 
+  Future<http.Response> put(String path, {Map<String, dynamic>? body}) async {
+    final headers = await _authHeaders();
+    final uri = Uri.parse('$baseUrl$path');
+    final encoded = body != null ? jsonEncode(body) : null;
+    return http
+        .put(uri, headers: headers, body: encoded)
+        .timeout(const Duration(seconds: 10));
+  }
+
   // Exemplo: login que salva token
   Future<bool> login(String email, String password) async {
     // Ajuste: rota e campos conforme schemas do servidor

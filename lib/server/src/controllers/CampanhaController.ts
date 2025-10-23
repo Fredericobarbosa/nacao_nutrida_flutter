@@ -10,6 +10,9 @@ export default class CampanhaController {
     this.getAll = this.getAll.bind(this);
     this.getById = this.getById.bind(this);
     this.findByLocation = this.findByLocation.bind(this);
+    this.findByUserId = this.findByUserId.bind(this);
+    this.deactivate = this.deactivate.bind(this);
+    this.findDoacoesByCampanhaId = this.findDoacoesByCampanhaId.bind(this);
   }
 
   public async create(req: Request, res: Response): Promise<Response> {
@@ -75,6 +78,72 @@ export default class CampanhaController {
       return res
         .status(500)
         .json({ message: "Erro interno ao buscar campanha." });
+    }
+  }
+
+  public async findByUserId(req: Request, res: Response): Promise<Response> {
+    const usuarioLogado = req.user;
+
+    if (!usuarioLogado) {
+      return res.status(401).json({ message: "Usuário não autenticado" });
+    }
+
+    try {
+      const campanhas = await this.campanhaService.buscarPorUserId(
+        usuarioLogado.id
+      );
+      return res.status(200).json(campanhas);
+    } catch (error: any) {
+      console.error("Erro ao buscar campanha por usuario:", error);
+      return res
+        .status(500)
+        .json({ message: "Erro interno ao buscar campanha." });
+    }
+  }
+
+  public async deactivate(req: Request, res: Response): Promise<Response> {
+    const usuarioLogado = req.user;
+
+    if (!usuarioLogado) {
+      return res.status(401).json({ message: "Usuário não autenticado" });
+    }
+
+    try {
+      const { id } = req.params;
+      await this.campanhaService.desativarCampanha(id, usuarioLogado.id);
+      return res.status(204).end();
+    } catch (error: any) {
+      if (error.message.includes("Campanha nao encontrada.")) {
+        return res.status(404).json({ message: error.message });
+      }
+      console.error("Erro ao desativar campanha:", error);
+      return res
+        .status(500)
+        .json({ message: "Erro interno ao desativar campanha." });
+    }
+  }
+
+  public async findDoacoesByCampanhaId(
+    req: Request,
+    res: Response
+  ): Promise<Response> {
+    try {
+      const { id } = req.params;
+
+      if (!id) {
+        return res
+          .status(400)
+          .json({ message: "ID da campanha é obrigatório." });
+      }
+
+      const doacoes = await this.campanhaService.buscarDoacoesPorCampanhaId(id);
+
+      return res.status(200).json(doacoes);
+    } catch (error: any) {
+      console.error("Erro ao buscar doações da campanha:", error);
+      return res
+        .status(500)
+        .json({ message: "Erro interno ao buscar doações da campanha." });
     }
   }
 }

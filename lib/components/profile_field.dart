@@ -5,6 +5,7 @@ class ProfileField extends StatelessWidget {
   final String value;
   final TextInputType keyboardType;
   final bool enabled;
+  final bool compact;
 
   const ProfileField({
     Key? key,
@@ -12,6 +13,7 @@ class ProfileField extends StatelessWidget {
     required this.value,
     this.keyboardType = TextInputType.text,
     this.enabled = false,
+    this.compact = false,
   }) : super(key: key);
 
   @override
@@ -23,16 +25,16 @@ class ProfileField extends StatelessWidget {
           label,
           style: const TextStyle(fontSize: 14, color: Colors.black87),
         ),
-        const SizedBox(height: 4),
+        SizedBox(height: compact ? 2 : 4),
         TextFormField(
           initialValue: value,
           enabled: enabled,
           keyboardType: keyboardType,
           decoration: InputDecoration(
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(6)),
-            contentPadding: const EdgeInsets.symmetric(
+            contentPadding: EdgeInsets.symmetric(
               horizontal: 10,
-              vertical: 8,
+              vertical: compact ? 6 : 12,
             ),
           ),
         ),

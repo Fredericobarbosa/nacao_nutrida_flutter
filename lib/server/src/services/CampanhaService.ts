@@ -71,6 +71,116 @@ export default class CampanhaService {
     return this.agregarDados(campanha);
   }
 
+  /**
+   * Busca todas as campanhas ativas do usuário logado e agrega dados relacionados.
+   */
+  public async buscarPorUserId(userId: string) {
+    const campanhas = await this.prisma.campanha.findMany({
+      where: {
+        usuario_id: userId,
+        dt_encerramento_campanha: { gt: new Date() },
+        fg_campanha_ativa: true,
+      },
+      orderBy: {
+        dt_encerramento_campanha: "desc",
+      },
+    });
+
+    if (campanhas.length === 0) return [];
+
+    return Promise.all(
+      campanhas.map((campanha) => this.agregarDados(campanha))
+    );
+  }
+
+  /**
+   * Permite ao usuario desativar uma campanha que ele criou, dessa forma não aparece mais nas listagens.
+   */
+  public async desativarCampanha(id: string, userId: string) {
+    const updateResult = await this.prisma.campanha.updateMany({
+      where: {
+        id: id,
+        usuario_id: userId,
+      },
+      data: { fg_campanha_ativa: false },
+    });
+
+    if (updateResult.count === 0) {
+      throw new Error("Campanha nao encontrada.");
+    }
+  }
+
+  /**
+   * Busca todas as doações de uma campanha especifica.
+   */
+  public async buscarDoacoesPorCampanhaId(campanhaId: string) {
+    const doacoes = await this.prisma.alimento_doacao.findMany({
+      where: {
+        campanha_id: campanhaId,
+      },
+    });
+
+    if (doacoes.length === 0) {
+      return [];
+    }
+
+    const usuarioIds = [...new Set(doacoes.map((d) => d.usuario_id))];
+    const alimentoIds = [...new Set(doacoes.map((d) => d.alimento_id))];
+    const [usuarios, alimentos] = await Promise.all([
+      this.prisma.usuario.findMany({
+        where: {
+          id: { in: usuarioIds },
+        },
+        select: {
+          id: true,
+          nm_usuario: true,
+          cd_foto_usuario: true,
+          nm_cidade_usuario: true,
+          sg_estado_usuario: true,
+        },
+      }),
+      this.prisma.alimento.findMany({
+        where: {
+          id: { in: alimentoIds },
+        },
+        select: {
+          id: true,
+          nm_alimento: true,
+        },
+      }),
+    ]);
+    const usuarioMap = new Map(usuarios.map((u) => [u.id, u]));
+    const alimentoMap = new Map(alimentos.map((a) => [a.id, a]));
+    const resultadoFinal = doacoes
+      .map((doacao) => {
+        const usuario = usuarioMap.get(doacao.usuario_id);
+        const alimento = alimentoMap.get(doacao.alimento_id);
+
+        if (!usuario || !alimento) {
+          return null;
+        }
+
+        return {
+          id_doacao: doacao.id,
+          quantidade_doada: doacao.qt_alimento_doado,
+          doador: {
+            nome: usuario.nm_usuario,
+            foto: usuario.cd_foto_usuario,
+            cidade: usuario.nm_cidade_usuario,
+            estado: usuario.sg_estado_usuario,
+          },
+          alimento: {
+            nome: alimento.nm_alimento,
+          },
+        };
+      })
+      .filter(Boolean); // Remove quaisquer entradas nulas (dados órfãos)
+    return resultadoFinal;
+  }
+
+  /**
+   * Busca todas as campanhas ativas de um local (estado e cidade) e agrega dados relacionados.
+   */
   public async buscarPorLocal(
     sg_estado_campanha: string,
     nm_cidade_campanha: string

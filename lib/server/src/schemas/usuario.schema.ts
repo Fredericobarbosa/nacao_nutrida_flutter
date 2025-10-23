@@ -54,12 +54,6 @@ export const criarUsuarioSchema = z.object({
             path: ["ch_cpf_usuario"],
             message: "O CPF é obrigatório para pessoa física.",
           });
-        } else if (!cpf.isValid(data.ch_cpf_usuario)) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: ["ch_cpf_usuario"],
-            message: "CPF inválido.",
-          });
         }
 
         if (!data.dt_nascimento_usuario) {
@@ -100,3 +94,24 @@ export const loginUsuarioSchema = z.object({
     .min(6, "Sua senha deve ter no mínimo 6 caracteres."),
 });
 export type LogarUsuarioDTO = z.infer<typeof loginUsuarioSchema>;
+
+export const atualizarUsuarioSchema = z.object({
+  nm_usuario: z
+    .string()
+    .min(1, "O nome é obrigatório.")
+    .min(3, "O nome deve ter no mínimo 3 caracteres.")
+    .transform((name) => {
+      return name
+        .trim()
+        .split(" ")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+    })
+    .optional(),
+  nr_celular_usuario: z.string().optional(),
+  cd_foto_usuario: z.string().optional(),
+  sg_estado_usuario: z.string().optional(),
+  nm_cidade_usuario: z.string().optional(),
+});
+
+export type AtualizarUsuarioDTO = z.infer<typeof atualizarUsuarioSchema>;

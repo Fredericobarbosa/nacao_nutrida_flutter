@@ -4,13 +4,15 @@ import 'models/auth_manager.dart';
 import 'models/campaign.dart';
 import 'screens/pagina_inicial.dart';
 import 'screens/descobrir.dart';
+import 'screens/descobrir_campanha.dart';
 import 'screens/login.dart';
 import 'screens/cadastro_usuario.dart';
 import 'screens/cadastrar_campanha.dart';
 import 'screens/detalhes_campanha.dart';
 import 'screens/doar_alimentos.dart';
 import 'screens/analytics_dashboard.dart';
-import 'screens/profile_screen.dart'; // ✅ import da nova tela de perfil
+import 'screens/dados_perfil.dart';
+import 'screens/editar_perfil.dart';
 
 void main() {
   runApp(
@@ -34,7 +36,9 @@ class MyApp extends StatelessWidget {
         '/cadastro-usuario': (context) => const CadastroUsuarioPage(),
         '/cadastrar-campanha': (context) => const CadastrarCampanhaPage(),
         '/analytics': (context) => const AnalyticsDashboard(),
-        // '/perfil': (context) => ProfileScreen(),
+        '/descobrir-campanha': (context) => const DescobrirCampanhaPage(),
+        '/perfil': (context) => DadosPerfil(),
+        '/editar-perfil': (context) => const EditarPerfilPage(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/detalhes-campanha') {

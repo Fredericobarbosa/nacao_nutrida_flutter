@@ -7,6 +7,7 @@ export default class DoacaoController {
   constructor(doacaoService: DoacaoService) {
     this.doacaoService = doacaoService;
     this.create = this.create.bind(this);
+    this.findByUserId = this.findByUserId.bind(this);
   }
 
   public async create(req: Request, res: Response): Promise<Response> {
@@ -18,6 +19,26 @@ export default class DoacaoController {
       return res
         .status(500)
         .json({ message: "Erro interno ao processar doação." });
+    }
+  }
+
+  public async findByUserId(req: Request, res: Response): Promise<Response> {
+    const usuarioLogado = req.user;
+
+    if (!usuarioLogado) {
+      return res.status(401).json({ message: "Usuário não autenticado" });
+    }
+
+    try {
+      const doacoes = await this.doacaoService.buscarPorUserId(
+        usuarioLogado.id
+      );
+      return res.status(200).json(doacoes);
+    } catch (error: any) {
+      console.error("Erro ao buscar doações por usuário:", error);
+      return res
+        .status(500)
+        .json({ message: "Erro interno ao buscar doações." });
     }
   }
 }

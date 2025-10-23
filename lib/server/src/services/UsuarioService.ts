@@ -1,6 +1,10 @@
 import { PrismaClient } from "@prisma/client";
 import * as bcrypt from "bcrypt";
-import { CriarUsuarioDTO, LogarUsuarioDTO } from "../schemas/usuario.schema";
+import {
+  AtualizarUsuarioDTO,
+  CriarUsuarioDTO,
+  LogarUsuarioDTO,
+} from "../schemas/usuario.schema";
 import * as jwt from "jsonwebtoken";
 
 export default class UsuarioService {
@@ -9,6 +13,13 @@ export default class UsuarioService {
 
   constructor(prisma: PrismaClient) {
     this.prisma = prisma;
+  }
+
+  public async buscarAdmins() {
+    const admins = await this.prisma.usuario.findMany({
+      where: { fg_admin: 1 },
+    });
+    return admins.map(({ cd_senha_usuario, ...admin }) => admin);
   }
 
   public async cadastrarUsuario(userInfos: CriarUsuarioDTO) {
@@ -102,5 +113,36 @@ export default class UsuarioService {
     });
 
     return usuariosSemSenha;
+  }
+
+  public async buscarNomeUsuarioPorId(id: string) {
+    const usuario = await this.prisma.usuario.findUnique({ where: { id } });
+    if (!usuario) {
+      throw new Error("Usuário nao encontrado");
+    }
+    const { cd_senha_usuario, ...usuarioSemSenha } = usuario;
+    return usuarioSemSenha;
+  }
+
+  public async atualizarUsuario(
+    id: string,
+    userUpdatedInfos: AtualizarUsuarioDTO
+  ) {
+    const usuarioExistente = await this.prisma.usuario.findUnique({
+      where: { id },
+    });
+
+    if (!usuarioExistente) {
+      throw new Error("Usuário não encontrado");
+    }
+
+    const usuarioAtualizado = await this.prisma.usuario.update({
+      where: { id: id },
+      data: userUpdatedInfos,
+    });
+
+    const { cd_senha_usuario, ...usuarioSemSenha } = usuarioAtualizado;
+
+    return usuarioSemSenha;
   }
 }

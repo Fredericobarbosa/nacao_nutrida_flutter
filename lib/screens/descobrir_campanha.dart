@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../components/header.dart';
+import '../components/header_login.dart';
 import '../components/footer.dart';
 import '../services/analytics_service.dart';
 import '../services/api_service.dart';
@@ -7,14 +7,14 @@ import '../config/api.dart';
 import '../models/campaign.dart';
 import 'dart:convert';
 
-class DescobrirPage extends StatefulWidget {
-  const DescobrirPage({super.key});
+class DescobrirCampanhaPage extends StatefulWidget {
+  const DescobrirCampanhaPage({super.key});
 
   @override
-  State<DescobrirPage> createState() => _DescobrirPageState();
+  State<DescobrirCampanhaPage> createState() => _DescobrirCampanhaPage();
 }
 
-class _DescobrirPageState extends State<DescobrirPage> {
+class _DescobrirCampanhaPage extends State<DescobrirCampanhaPage> {
   bool _loadingApi = false;
   String? _error;
   List<Campaign> _campanhas = [];
@@ -222,7 +222,7 @@ class _DescobrirPageState extends State<DescobrirPage> {
                     child: IconButton(
                       icon: const Icon(
                         Icons.arrow_back,
-                        color: Color(0xFF027BA1),
+                        color: Color(0xFF027ba1),
                       ),
                       onPressed: () {
                         AnalyticsService().trackButtonClick(
@@ -234,15 +234,7 @@ class _DescobrirPageState extends State<DescobrirPage> {
                     ),
                   ),
                 ),
-                Expanded(
-                  child: Header(
-                    rightText: 'Não tem conta?',
-                    rightButtonText: 'Cadastre-se',
-                    onRightButtonPressed: () {
-                      Navigator.of(context).pushNamed('/cadastro-usuario');
-                    },
-                  ),
-                ),
+                const Expanded(child: HeaderLogin()),
               ],
             ),
 

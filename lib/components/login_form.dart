@@ -43,7 +43,7 @@ class _LoginFormState extends State<LoginForm> {
         final authManager = Provider.of<AuthManager>(context, listen: false);
         // Caso o backend não retorne dados do usuário, usamos um login simplificado
         authManager.login(name: email.split('@').first, email: email);
-        Navigator.of(context).pushNamed('/descobrir');
+        Navigator.of(context).pushNamed('/descobrir-campanha');
       } else {
         ScaffoldMessenger.of(
           context,

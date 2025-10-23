@@ -4,6 +4,7 @@ import UsuarioService from "../services/UsuarioService";
 import UsuarioController from "../controllers/UsuarioController";
 import validateRequest from "../middlewares/validateRequest";
 import {
+  atualizarUsuarioSchema,
   criarUsuarioSchema,
   loginUsuarioSchema,
 } from "../schemas/usuario.schema";
@@ -14,6 +15,19 @@ const usuarioService = new UsuarioService(prisma);
 const usuarioController = new UsuarioController(usuarioService);
 
 const usuarioRouter = Router();
+
+usuarioRouter.get(
+  "/usuario/nome/:id",
+  authMiddleware,
+  usuarioController.getUserNameById
+);
+
+usuarioRouter.patch(
+  "/usuario/:id",
+  authMiddleware,
+  validateRequest(atualizarUsuarioSchema),
+  usuarioController.updateUser
+);
 
 usuarioRouter.post(
   "/usuarioCadastro",
