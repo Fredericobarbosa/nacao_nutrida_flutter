@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import '../components/header_auth.dart';
+import '../components/header_login.dart';
 import '../components/cadastro_campanha.dart';
 import '../services/analytics_service.dart';
+// Note: O componente 'HeaderAuth' foi removido, se existisse.
 
 class CadastrarCampanhaPage extends StatefulWidget {
   const CadastrarCampanhaPage({super.key});
@@ -34,19 +35,18 @@ class _CadastrarCampanhaPageState extends State<CadastrarCampanhaPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFf6f6f6),
+      
+      // **ALTERAÇÃO AQUI:** Usando HeaderLogin no appBar
+      // showBack: true é usado para incluir o botão de voltar, comum em formulários de cadastro.
+      appBar: const HeaderLogin(showBack: true), 
+
       body: !_carregou
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
               child: Column(
                 children: [
-                  HeaderAuth(
-                    rightText: 'Não tem conta?',
-                    rightButtonText: 'Cadastrar-se',
-                    onRightButtonPressed: () {
-                      Navigator.of(context).pushNamed('/cadastro-usuario');
-                    },
-                  ),
-                  const SizedBox.shrink(),
+                  // O componente HeaderAuth (ou a lógica de cabeçalho antiga) foi removido daqui
+                  // const SizedBox.shrink(),
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: CadastroCampanhaForm(),

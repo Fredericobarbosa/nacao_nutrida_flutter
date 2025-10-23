@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../components/header.dart';
+import '../components/header_login.dart';
 import '../components/cadastro_campanha.dart';
 import '../services/analytics_service.dart';
 
@@ -34,39 +34,21 @@ class _CadastrarPedidoPageState extends State<CadastrarPedidoPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFf6f6f6),
+
+      // **SUBSTITUIÇÃO AQUI:** Usando HeaderLogin no appBar
+      // showBack: true garante que o botão de voltar apareça.
+      appBar: const HeaderLogin(showBack: true), 
+      // O HeaderLogin trata do botão de voltar e do layout do cabeçalho.
+
       body: !_carregou
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
               child: Column(
                 children: [
-                  Row(
-                    children: [
-                      Container(
-                        color: Colors.white,
-                        child: IconButton(
-                          icon: const Icon(
-                            Icons.arrow_back,
-                            color: Color(0xFF027ba1),
-                          ),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                        ),
-                      ),
-                      Expanded(
-                        child: Header(
-                          leftText: null,
-                          rightText: 'Não tem conta?',
-                          rightButtonText: 'Cadastre-se',
-                          onRightButtonPressed: () {
-                            Navigator.of(
-                              context,
-                            ).pushNamed('/cadastro-usuario');
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
+                  
+                  // REMOVEMOS A ROW COM O ICONBUTTON E O HEADER MANUAL
+                  // Essa lógica foi movida para o appBar
+
                   const SizedBox.shrink(),
                   Padding(
                     padding: const EdgeInsets.all(24),

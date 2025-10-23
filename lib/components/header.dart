@@ -49,7 +49,7 @@ class Header extends StatelessWidget {
               const SizedBox(width: 8),
               TextButton(
                 onPressed: () {
-                  Navigator.of(context).pushNamed('/cadastrar-campanha');
+                  Navigator.of(context).pushNamed('/login');
                 },
                 child: const Text(
                   'Criar',

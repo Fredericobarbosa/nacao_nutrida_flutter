@@ -83,8 +83,8 @@ class HeaderLogin extends StatelessWidget implements PreferredSizeWidget {
       ),
     );
 
-    // Redireciona para tela de login (ajuste conforme sua rota)
-    Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+    // Redireciona para tela de inicial
+    Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
   }
 
   @override

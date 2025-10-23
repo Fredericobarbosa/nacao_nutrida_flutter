@@ -313,7 +313,7 @@ class _AnalyticsDashboardState extends State<AnalyticsDashboard> {
                 Icon(Icons.warning, color: Colors.red, size: 24),
                 const SizedBox(width: 12),
                 const Text(
-                  'Páginas Pesadas (Demoram mais para renderizar)',
+                  'Páginas Pesadas',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
               ],

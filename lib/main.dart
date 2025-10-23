@@ -13,6 +13,7 @@ import 'screens/doar_alimentos.dart';
 import 'screens/analytics_dashboard.dart';
 import 'screens/dados_perfil.dart';
 import 'screens/editar_perfil.dart';
+import 'screens/painel_screen.dart';
 
 void main() {
   runApp(
@@ -39,6 +40,7 @@ class MyApp extends StatelessWidget {
         '/descobrir-campanha': (context) => const DescobrirCampanhaPage(),
         '/perfil': (context) => DadosPerfil(),
         '/editar-perfil': (context) => const EditarPerfilPage(),
+        '/painel': (context) => const PainelScreen(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/detalhes-campanha') {
