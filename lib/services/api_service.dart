@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/foundation.dart';
 
 class ApiService {
   final String baseUrl;
@@ -10,6 +11,7 @@ class ApiService {
   Future<Map<String, String>> _authHeaders() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('jwt_token');
+    debugPrint('[ApiService] Token lido do SharedPreferences: $token');
     if (token != null) {
       return {
         'Content-Type': 'application/json',

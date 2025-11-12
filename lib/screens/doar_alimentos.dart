@@ -541,8 +541,10 @@ class _DoarAlimentosPageState extends State<DoarAlimentosPage> {
     if (!mounted) return false;
 
     try {
-      final perfilResp = await api.get('/usuario/perfil');
+      final perfilResp = await api.get('/perfil');
       if (perfilResp.statusCode != 200) {
+        debugPrint('Falha ao buscar /usuario/perfil. Status: ${perfilResp.statusCode}');
+        debugPrint('Corpo da Resposta (Erro): ${perfilResp.body}');
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Não foi possível obter perfil do usuário.'),

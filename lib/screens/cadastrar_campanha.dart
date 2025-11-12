@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../components/header_login.dart';
 import '../components/cadastro_campanha.dart';
 import '../services/analytics_service.dart';
-// Note: O componente 'HeaderAuth' foi removido, se existisse.
 
 class CadastrarCampanhaPage extends StatefulWidget {
   const CadastrarCampanhaPage({super.key});
