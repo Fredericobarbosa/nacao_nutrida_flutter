@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
 import '../components/header_login.dart';
-import '../models/campaign_model.dart';
+import '../models/campaign.dart';
+import '../services/api_service.dart';
+import '../config/api.dart';
 import '../models/donation_campaign_model.dart';
 import '../components/campaign_card.dart';
 import '../components/donation_card.dart';
@@ -23,38 +26,49 @@ class _PainelScreenState extends State<PainelScreen> {
   @override
   void initState() {
     super.initState();
-    _fetchCampanhas();
+    _fetchData();
   }
 
-  Future<void> _fetchCampanhas() async {
+  Future<void> _fetchData() async {
     setState(() => loading = true);
-    await Future.delayed(const Duration(milliseconds: 600)); // simulação
-    setState(() {
-      campanhas = [
-        Campaign(
-          id: '1',
-          title: 'Campanha Solidária',
-          description: 'Ajude famílias em necessidade.',
-          image: 'https://picsum.photos/200/140',
-          foods: ['Arroz', 'Feijão', 'Macarrão'],
-        ),
-      ];
-      doacoes = [
-        DonationByCampaign(
-          campaign: CampaignInfo(
-            id: '1',
-            name: 'Campanha Solidária',
-            city: 'Franca',
-            state: 'SP',
-          ),
-          foods: [
-            FoodDonation(id: '1', name: 'Arroz', quantity: 5),
-            FoodDonation(id: '2', name: 'Feijão', quantity: 2),
-          ],
-        ),
-      ];
-      loading = false;
-    });
+    final api = ApiService(baseUrl: ApiConfig.baseUrl);
+
+    try {
+      // Buscar campanhas do usuário
+      try {
+        final resp = await api.get('/campanhas/minhas');
+        if (resp.statusCode == 200) {
+          final List<dynamic> data = jsonDecode(resp.body) as List<dynamic>;
+          final List<Campaign> lista = data
+              .map((e) => Campaign.fromJson(e as Map<String, dynamic>))
+              .toList();
+          setState(() => campanhas = lista);
+        } else {
+          // Não fatal: apenas log
+          print('Erro ao buscar campanhas: ${resp.statusCode} ${resp.body}');
+        }
+      } catch (e) {
+        print('Erro ao conectar para campanhas: $e');
+      }
+
+      // Buscar doações do usuário
+      try {
+        final resp2 = await api.get('/doacoes/minhas');
+        if (resp2.statusCode == 200) {
+          final List<dynamic> data2 = jsonDecode(resp2.body) as List<dynamic>;
+          final List<DonationByCampaign> lista2 = data2
+              .map((e) => DonationByCampaign.fromJson(e as Map<String, dynamic>))
+              .toList();
+          setState(() => doacoes = lista2);
+        } else {
+          print('Erro ao buscar doacoes: ${resp2.statusCode} ${resp2.body}');
+        }
+      } catch (e) {
+        print('Erro ao conectar para doacoes: $e');
+      }
+    } finally {
+      setState(() => loading = false);
+    }
   }
 
   @override

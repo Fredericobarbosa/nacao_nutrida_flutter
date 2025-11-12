@@ -20,13 +20,13 @@ class DoarAlimentosPage extends StatefulWidget {
 
 class _DoarAlimentosPageState extends State<DoarAlimentosPage> {
   final Map<String, int> _doacoes = {};
+  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
     AnalyticsService().trackPageView('Doar Alimentos');
-    // Inicializa o mapa de doações com os alimentos da campanha
-    for (String alimento in widget.campanha.tiposAlimento) {
+    for (String alimento in widget.campanha.metaAlimentos.keys) {
       _doacoes[alimento] = 0;
     }
   }
@@ -118,15 +118,15 @@ class _DoarAlimentosPageState extends State<DoarAlimentosPage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF027ba1).withValues(alpha: 0.1),
+        color: const Color(0xFF027ba1).withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: const Color(0xFF027ba1).withValues(alpha: 0.3),
+          color: const Color(0xFF027ba1).withOpacity(0.3),
         ),
       ),
       child: Row(
         children: [
-          Icon(Icons.campaign, color: const Color(0xFF027ba1), size: 32),
+          const Icon(Icons.campaign, color: Color(0xFF027ba1), size: 32),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -164,7 +164,7 @@ class _DoarAlimentosPageState extends State<DoarAlimentosPage> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.1),
+            color: Colors.grey.withOpacity(0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -183,7 +183,7 @@ class _DoarAlimentosPageState extends State<DoarAlimentosPage> {
           ),
           const SizedBox(height: 16),
           Column(
-            children: widget.campanha.tiposAlimento.map((alimento) {
+            children: widget.campanha.metaAlimentos.keys.map((alimento) {
               final metaQtd = widget.campanha.metaAlimentos[alimento] ?? 0;
               final arrecadadoQtd =
                   widget.campanha.alimentosArrecadados[alimento] ?? 0;
@@ -202,9 +202,9 @@ class _DoarAlimentosPageState extends State<DoarAlimentosPage> {
                   children: [
                     Row(
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.restaurant,
-                          color: const Color(0xFF027ba1),
+                          color: Color(0xFF027ba1),
                           size: 20,
                         ),
                         const SizedBox(width: 8),
@@ -221,9 +221,7 @@ class _DoarAlimentosPageState extends State<DoarAlimentosPage> {
                           'Necessário: ${necessario > 0 ? necessario : 0} kg',
                           style: TextStyle(
                             fontSize: 12,
-                            color: necessario > 0
-                                ? Colors.orange
-                                : Colors.green,
+                            color: necessario > 0 ? Colors.orange : Colors.green,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -235,11 +233,11 @@ class _DoarAlimentosPageState extends State<DoarAlimentosPage> {
                         Expanded(
                           child: TextFormField(
                             keyboardType: TextInputType.number,
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               labelText: 'Quantidade (kg)',
                               hintText: '0',
-                              border: const OutlineInputBorder(),
-                              contentPadding: const EdgeInsets.symmetric(
+                              border: OutlineInputBorder(),
+                              contentPadding: EdgeInsets.symmetric(
                                 horizontal: 12,
                                 vertical: 8,
                               ),
@@ -266,8 +264,8 @@ class _DoarAlimentosPageState extends State<DoarAlimentosPage> {
                           ),
                           decoration: BoxDecoration(
                             color: (_doacoes[alimento] ?? 0) > 0
-                                ? Colors.green.withValues(alpha: 0.1)
-                                : Colors.grey.withValues(alpha: 0.1),
+                                ? Colors.green.withOpacity(0.1)
+                                : Colors.grey.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
@@ -294,9 +292,8 @@ class _DoarAlimentosPageState extends State<DoarAlimentosPage> {
 
   Widget _buildResumoDoacao() {
     final totalDoacao = _doacoes.values.fold(0, (sum, qty) => sum + qty);
-    final alimentosComDoacao = _doacoes.entries
-        .where((entry) => entry.value > 0)
-        .toList();
+    final alimentosComDoacao =
+        _doacoes.entries.where((entry) => entry.value > 0).toList();
 
     if (totalDoacao == 0) {
       return Container();
@@ -305,18 +302,18 @@ class _DoarAlimentosPageState extends State<DoarAlimentosPage> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.green.withValues(alpha: 0.1),
+        color: Colors.green.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
+        border: Border.all(color: Colors.green.withOpacity(0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          const Row(
             children: [
               Icon(Icons.receipt, color: Colors.green, size: 24),
-              const SizedBox(width: 8),
-              const Text(
+              SizedBox(width: 8),
+              Text(
                 'Resumo da Sua Doação',
                 style: TextStyle(
                   fontSize: 18,
@@ -374,7 +371,7 @@ class _DoarAlimentosPageState extends State<DoarAlimentosPage> {
       children: [
         Expanded(
           child: OutlinedButton.icon(
-            onPressed: () => Navigator.pop(context),
+            onPressed: _isLoading ? null : () => Navigator.pop(context),
             icon: const Icon(Icons.arrow_back),
             label: const Text('Voltar'),
             style: OutlinedButton.styleFrom(
@@ -390,9 +387,19 @@ class _DoarAlimentosPageState extends State<DoarAlimentosPage> {
         Expanded(
           flex: 2,
           child: ElevatedButton.icon(
-            onPressed: _confirmarDoacao,
-            icon: const Icon(Icons.volunteer_activism),
-            label: const Text('Confirmar Doação'),
+            onPressed: _isLoading ? null : _confirmarDoacao,
+            icon: _isLoading
+                ? Container(
+                    width: 20,
+                    height: 20,
+                    margin: const EdgeInsets.only(right: 8),
+                    child: const CircularProgressIndicator(
+                      color: Colors.white,
+                      strokeWidth: 2,
+                    ),
+                  )
+                : const Icon(Icons.volunteer_activism),
+            label: Text(_isLoading ? 'Enviando...' : 'Confirmar Doação'),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.green,
               foregroundColor: Colors.white,
@@ -407,20 +414,19 @@ class _DoarAlimentosPageState extends State<DoarAlimentosPage> {
     );
   }
 
-  void _confirmarDoacao() {
+  void _confirmarDoacao() async {
     final authManager = Provider.of<AuthManager>(context, listen: false);
 
-    // Se usuário não estiver logado, redirecionar para login
     if (!authManager.isLoggedIn) {
       showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Row(
+            title: const Row(
               children: [
-                Icon(Icons.login, color: const Color(0xFF027ba1), size: 28),
-                const SizedBox(width: 8),
-                const Text('Login Necessário'),
+                Icon(Icons.login, color: Color(0xFF027ba1), size: 28),
+                SizedBox(width: 8),
+                Text('Login Necessário'),
               ],
             ),
             content: const Column(
@@ -447,8 +453,8 @@ class _DoarAlimentosPageState extends State<DoarAlimentosPage> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.of(context).pop(); // Fecha dialog
-                  Navigator.of(context).pushNamed('/login'); // Vai para login
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pushNamed('/login');
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF027ba1),
@@ -474,56 +480,67 @@ class _DoarAlimentosPageState extends State<DoarAlimentosPage> {
       return;
     }
 
-    // Antes de confirmar, efetua o POST real para /doacoes
-    _postDoacao();
+    setState(() {
+      _isLoading = true;
+    });
 
-    // Simular confirmação local da doação (dialog de sucesso exibido após o POST se necessário)
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Row(
-            children: [
-              Icon(Icons.check_circle, color: Colors.green, size: 28),
-              const SizedBox(width: 8),
-              const Text('Doação Confirmada!'),
-            ],
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text('Sua doação foi registrada com sucesso!'),
-              const SizedBox(height: 12),
-              const Text(
-                'Próximos passos:',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              const Text('1. O responsável da campanha entrará em contato'),
-              const Text('2. Será combinado local e horário para entrega'),
-              const Text('3. Você receberá um comprovante da doação'),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Fecha o dialog
-                Navigator.of(context).pop(); // Volta para detalhes
-              },
-              child: const Text('OK'),
+    final bool sucesso = await _postDoacao();
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    if (!mounted) return;
+
+    if (sucesso) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Row(
+              children: [
+                Icon(Icons.check_circle, color: Colors.green, size: 28),
+                SizedBox(width: 8),
+                Text('Doação Confirmada!'),
+              ],
             ),
-          ],
-        );
-      },
-    );
+            content: const Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Sua doação foi registrada com sucesso!'),
+                SizedBox(height: 12),
+                Text(
+                  'Próximos passos:',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 8),
+                Text('1. O responsável da campanha entrará em contato'),
+                Text('2. Será combinado local e horário para entrega'),
+                Text('3. Você receberá um comprovante da doação'),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 
-  Future<void> _postDoacao() async {
+  Future<bool> _postDoacao() async {
     final api = ApiService(baseUrl: ApiConfig.baseUrl);
+    if (!mounted) return false;
 
     try {
-      // 1) Buscar perfil do usuário para obter o ID
       final perfilResp = await api.get('/usuario/perfil');
       if (perfilResp.statusCode != 200) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -532,10 +549,10 @@ class _DoarAlimentosPageState extends State<DoarAlimentosPage> {
             backgroundColor: Colors.red,
           ),
         );
-        return;
+        return false;
       }
       final perfil = jsonDecode(perfilResp.body);
-      final usuarioId = perfil['_id'] ?? perfil['id'];
+      final usuarioId = perfil['_id']?.toString() ?? perfil['id']?.toString();
       if (usuarioId == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -543,10 +560,9 @@ class _DoarAlimentosPageState extends State<DoarAlimentosPage> {
             backgroundColor: Colors.red,
           ),
         );
-        return;
+        return false;
       }
 
-      // 2) Garantir que temos os alimento_ids: buscar campanha completa
       final campanhaResp = await api.get('/campanhas/${widget.campanha.id}');
       if (campanhaResp.statusCode != 200) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -555,26 +571,25 @@ class _DoarAlimentosPageState extends State<DoarAlimentosPage> {
             backgroundColor: Colors.red,
           ),
         );
-        return;
+        return false;
       }
       final campanhaJson = jsonDecode(campanhaResp.body);
-      final alimentosCampanha = campanhaJson['alimentos_campanha'] as List?;
+      final alimentosCampanha = campanhaJson['alimentos'] as List?;
       final Map<String, String> nomeParaId = {};
       if (alimentosCampanha != null) {
         for (final a in alimentosCampanha) {
-          final id = a['alimento_id'] ?? a['id'];
-          final nome = a['nm_alimento'] ?? a['nome'] ?? id;
-          if (id != null) nomeParaId[nome.toString()] = id.toString();
+          final id = a['alimento_id']?.toString() ?? a['id']?.toString();
+          final nome =
+              a['nm_alimento']?.toString() ?? a['nome']?.toString() ?? id;
+          if (id != null && nome != null) nomeParaId[nome] = id;
         }
       }
 
-      // 3) Montar lista alimentos_doacao usando ids
       final alimentosDoacao = <Map<String, dynamic>>[];
       _doacoes.forEach((nome, qty) {
         if (qty > 0) {
           final alimentoId = nomeParaId[nome];
           if (alimentoId == null) {
-            // não temos id para esse alimento -> aviso e aborta
             throw Exception('ID do alimento não encontrado para $nome');
           }
           alimentosDoacao.add({
@@ -591,7 +606,7 @@ class _DoarAlimentosPageState extends State<DoarAlimentosPage> {
             backgroundColor: Colors.orange,
           ),
         );
-        return;
+        return false;
       }
 
       final payload = {
@@ -604,12 +619,7 @@ class _DoarAlimentosPageState extends State<DoarAlimentosPage> {
 
       final resp = await api.post('/doacoes', payload);
       if (resp.statusCode == 201 || resp.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Doação registrada com sucesso!'),
-            backgroundColor: Colors.green,
-          ),
-        );
+        return true;
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -617,14 +627,17 @@ class _DoarAlimentosPageState extends State<DoarAlimentosPage> {
             backgroundColor: Colors.red,
           ),
         );
+        return false;
       }
     } catch (e) {
+      if (!mounted) return false;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Falha ao registrar doação: $e'),
           backgroundColor: Colors.red,
         ),
       );
+      return false;
     }
   }
 }

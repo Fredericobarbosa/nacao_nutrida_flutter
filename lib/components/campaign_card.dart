@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/campaign_model.dart';
+import '../models/campaign.dart';
 
 class CampaignCard extends StatelessWidget {
   final Campaign campaign;
@@ -21,8 +21,8 @@ class CampaignCard extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            Image.network(
-              campaign.image,
+            Image.asset(
+              campaign.imageUrl,
               height: 120,
               width: double.infinity,
               fit: BoxFit.cover,
@@ -40,7 +40,7 @@ class CampaignCard extends StatelessWidget {
             Text(campaign.description, textAlign: TextAlign.center),
             const SizedBox(height: 6),
             Text(
-              "Alimentos: ${campaign.foods.join(', ')}",
+              "Alimentos: ${campaign.tiposAlimento.join(', ')}",
               style: const TextStyle(color: Colors.black54),
             ),
             const SizedBox(height: 10),

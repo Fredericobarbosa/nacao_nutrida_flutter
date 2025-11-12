@@ -183,7 +183,7 @@ class _DescobrirPageState extends State<DescobrirPage> {
       id: id,
       title: title,
       description: description,
-      imageUrl: imageUrl,
+      imageUrl: "assets/generic_nn.jpg",
       status: status,
       metaAlimentos: metaAlimentos,
       alimentosArrecadados: alimentosArrecadados,

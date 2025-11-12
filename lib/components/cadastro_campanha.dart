@@ -208,7 +208,7 @@ class _CadastroCampanhaFormState extends State<CadastroCampanhaForm> {
                           color: Colors.grey[300],
                         ),
                         child: img.isNotEmpty
-                            ? Image.network(img, fit: BoxFit.cover)
+                            ? Image.asset(img, fit: BoxFit.cover)
                             : null,
                       ),
                       GestureDetector(
