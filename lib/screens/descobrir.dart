@@ -36,7 +36,7 @@ class _DescobrirPageState extends State<DescobrirPage> {
 
   Future<void> _fetchEstadosCidades() async {
     // Tenta buscar do backend com até 2 tentativas. Se falhar, usa fallback embutido para dev.
-    final api = ApiService(baseUrl: ApiConfig.baseUrlAndroid);
+    final api = ApiService(baseUrl: ApiConfig.baseUrl);
     int attempts = 0;
     while (attempts < 2) {
       attempts += 1;
@@ -96,7 +96,7 @@ class _DescobrirPageState extends State<DescobrirPage> {
       _error = null;
     });
 
-    final api = ApiService(baseUrl: ApiConfig.baseUrlAndroid);
+    final api = ApiService(baseUrl: ApiConfig.baseUrl);
     try {
       final resp = await api.get('/campanhas');
       if (resp.statusCode == 200) {

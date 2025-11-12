@@ -23,7 +23,7 @@ class _DetalhesCampanhaPageState extends State<DetalhesCampanhaPage> {
   @override
   void initState() {
     super.initState();
-    _api = ApiService(baseUrl: ApiConfig.baseUrlAndroid);
+    _api = ApiService(baseUrl: ApiConfig.baseUrl);
     _fetchCampanha();
   }
 

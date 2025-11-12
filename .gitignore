@@ -51,3 +51,5 @@ DEPLOYMENT_ANALYTICS.md
 .env
 **/.env
 .env.local
+
+lib/server/node_modules/

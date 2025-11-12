@@ -42,7 +42,7 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
 
   Future<void> _fetchPerfil() async {
     setState(() => _loading = true);
-    final api = ApiService(baseUrl: ApiConfig.baseUrlAndroid);
+    final api = ApiService(baseUrl: ApiConfig.baseUrl);
     try {
       final resp = await api.get('/perfil');
       if (resp.statusCode == 200) {
@@ -68,7 +68,7 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
   }
 
   Future<void> _fetchEstadosCidades() async {
-    final api = ApiService(baseUrl: ApiConfig.baseUrlAndroid);
+    final api = ApiService(baseUrl: ApiConfig.baseUrl);
     try {
       final resp = await api.get('/estadosCidades');
       if (resp.statusCode == 200) {
@@ -100,7 +100,7 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _loading = true);
 
-    final api = ApiService(baseUrl: ApiConfig.baseUrlAndroid);
+    final api = ApiService(baseUrl: ApiConfig.baseUrl);
     final payload = {
       'nm_usuario': _nomeCtrl.text,
       'nr_celular_usuario': _celularCtrl.text,

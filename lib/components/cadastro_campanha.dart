@@ -250,7 +250,7 @@ class _CadastroCampanhaFormState extends State<CadastroCampanhaForm> {
   }
 
   Future<void> _criarCampanha() async {
-    final api = ApiService(baseUrl: ApiConfig.baseUrlAndroid);
+    final api = ApiService(baseUrl: ApiConfig.baseUrl);
 
     // Validações mínimas
     if (tituloController.text.trim().isEmpty) {

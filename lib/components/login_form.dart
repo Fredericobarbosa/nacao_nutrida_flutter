@@ -36,7 +36,7 @@ class _LoginFormState extends State<LoginForm> {
     }
 
     setState(() => _loading = true);
-    final api = ApiService(baseUrl: ApiConfig.baseUrlAndroid);
+    final api = ApiService(baseUrl: ApiConfig.baseUrl);
     try {
       final ok = await api.login(email, password);
       if (ok) {

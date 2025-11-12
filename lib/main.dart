@@ -14,8 +14,11 @@ import 'screens/analytics_dashboard.dart';
 import 'screens/dados_perfil.dart';
 import 'screens/editar_perfil.dart';
 import 'screens/painel_screen.dart';
+import 'config/api.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await ApiConfig.initialize();
   runApp(
     ChangeNotifierProvider(create: (_) => AuthManager(), child: const MyApp()),
   );

@@ -520,7 +520,7 @@ class _DoarAlimentosPageState extends State<DoarAlimentosPage> {
   }
 
   Future<void> _postDoacao() async {
-    final api = ApiService(baseUrl: ApiConfig.baseUrlAndroid);
+    final api = ApiService(baseUrl: ApiConfig.baseUrl);
 
     try {
       // 1) Buscar perfil do usuário para obter o ID

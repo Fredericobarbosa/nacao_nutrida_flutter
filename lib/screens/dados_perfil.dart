@@ -34,7 +34,7 @@ class _DadosPerfilState extends State<DadosPerfil> {
       _error = null;
     });
 
-    final api = ApiService(baseUrl: ApiConfig.baseUrlAndroid);
+    final api = ApiService(baseUrl: ApiConfig.baseUrl);
     try {
       final resp = await api.get('/perfil');
       if (resp.statusCode == 200) {
