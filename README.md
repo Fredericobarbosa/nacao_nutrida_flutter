@@ -437,7 +437,9 @@ Este projeto está sob licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais
 
 Frederico Barbosa
 
-Jorge Santos 
+Jorge Santos
+
+Rafael Victor Redoval de Sousa
 
 Yago Mouro
 
