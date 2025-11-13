@@ -524,8 +524,7 @@ class _DoarAlimentosPageState extends State<DoarAlimentosPage> {
             actions: [
               TextButton(
                 onPressed: () {
-                  Navigator.of(context).pop();
-                  Navigator.of(context).pop();
+                  Navigator.of(context).pushNamed('/descobrir-campanha');
                 },
                 child: const Text('OK'),
               ),

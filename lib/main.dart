@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'models/auth_manager.dart';
 import 'models/campaign.dart';
@@ -19,6 +20,9 @@ import 'config/api.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await ApiConfig.initialize();
+
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+
   runApp(
     ChangeNotifierProvider(create: (_) => AuthManager(), child: const MyApp()),
   );

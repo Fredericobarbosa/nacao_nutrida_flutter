@@ -44,9 +44,7 @@ class ApiService {
         .timeout(const Duration(seconds: 10));
   }
 
-  // Exemplo: login que salva token
   Future<bool> login(String email, String password) async {
-    // Ajuste: rota e campos conforme schemas do servidor
     final resp = await post('/usuarioLogin', {
       'user_email': email,
       'user_password': password,

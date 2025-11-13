@@ -216,7 +216,6 @@ class _CadastroCampanhaFormState extends State<CadastroCampanhaForm> {
                 ),
               ),
               
-              // --- CORREÇÃO: CAMPOS DE ESTADO E CIDADE ---
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
                 value: _selectedEstado,
@@ -274,14 +273,12 @@ class _CadastroCampanhaFormState extends State<CadastroCampanhaForm> {
                   return null;
                 },
               ),
-              // --- FIM DA CORREÇÃO ---
 
               const SizedBox(height: 24),
               const Text(
                 'Alimentos',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
-              // CORREÇÃO: Verifica se a lista de alimentos está disponível
               if (_alimentosDisponiveis.isEmpty)
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 16.0),
@@ -295,7 +292,6 @@ class _CadastroCampanhaFormState extends State<CadastroCampanhaForm> {
                   int idx = entry.key;
                   var alimento = entry.value;
                   
-                  // CORREÇÃO: Lógica segura para encontrar o alimento selecionado
                   _Alimento? selectedAlimento;
                   if (alimento['id'] != null) {
                     try {
@@ -433,7 +429,6 @@ class _CadastroCampanhaFormState extends State<CadastroCampanhaForm> {
           'usuario_id': usuarioId,
           'nm_titulo_campanha': tituloController.text.trim(),
           'dt_encerramento_campanha': _dataEncerramento!.toIso8601String(), 
-          // CORREÇÃO: Usando as variáveis de estado
           'nm_cidade_campanha': _selectedCidade,
           'sg_estado_campanha': _selectedEstado,
           'ds_acao_campanha': descricaoController.text.trim(),
@@ -456,10 +451,9 @@ class _CadastroCampanhaFormState extends State<CadastroCampanhaForm> {
             backgroundColor: Colors.green,
           ),
         );
-        Navigator.of(context).pop(); 
+        Navigator.of(context).pushNamed('/descobrir-campanha'); 
       } else {
          final errorBody = jsonDecode(resp.body);
-         // Tenta pegar a mensagem de erro específica do Zod (backend)
          String errorMessage = 'Erro ao criar campanha';
          if (errorBody['message'] is String) {
            errorMessage = errorBody['message'];
