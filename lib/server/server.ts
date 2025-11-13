@@ -11,11 +11,7 @@ import chatRouter from "./src/routes/chat.routes";
 dotenv.config({ path: "../.env" });
 
 const app = express();
-app.use(
-  cors({
-    origin: "http://localhost:3000",
-  })
-);
+app.use(cors());
 
 // Express routes
 app.use(express.json());

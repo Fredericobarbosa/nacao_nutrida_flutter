@@ -2,12 +2,33 @@
 
 [![Flutter](https://img.shields.io/badge/Flutter-3.32.8-02569B?logo=flutter)](https://flutter.dev)
 [![Dart](https://img.shields.io/badge/Dart-3.5.0-0175C2?logo=dart)](https://dart.dev)
+[![Node.js](https://img.shields.io/badge/Node.js-18+-339933?logo=node.js)](https://nodejs.org)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![CI/CD](https://github.com/Fredericobarbosa/nacao_nutrida_flutter/actions/workflows/ci.yml/badge.svg)](https://github.com/Fredericobarbosa/nacao_nutrida_flutter/actions)
 
 > **Plataforma digital para doação de alimentos com sistema avançado de Analytics e Testes A/B**
 
-Uma aplicação Flutter Web que conecta doadores de alimentos com campanhas sociais, incluindo sistema completo de análise de métricas de uso em tempo real.
+Uma aplicação Flutter Web que conecta doadores de alimentos com campanhas sociais, incluindo sistema completo de análise de métricas de uso em tempo real e backend Node.js.
+
+## ⚡ Quick Start
+
+```bash
+# 1. Clone o repositório
+git clone https://github.com/Fredericobarbosa/nacao_nutrida_flutter.git
+cd nacao_nutrida_flutter
+
+# 2. Configure o backend
+cd lib/server
+cp .env.example .env
+# Edite .env com suas credenciais
+npm install
+npm run dev
+
+# 3. Em outro terminal, configure o frontend
+cd ../..
+flutter pub get
+flutter run -d chrome
+```
 
 ## 📋 Índice
 
@@ -125,44 +146,96 @@ AnalyticsService().trackHeavyPageMetrics('Dashboard',
 # Flutter SDK (versão 3.32.8 ou superior)
 flutter --version
 
+# Dart (normalmente incluído com Flutter)
+dart --version
+
+# Node.js e npm (para o servidor backend)
+node --version
+npm --version
+
 # Git para clonagem do repositório  
 git --version
 ```
 
 ### Passo a Passo
 
-1. **Clone o repositório**
-   ```bash
-   git clone https://github.com/Fredericobarbosa/nacao_nutrida_flutter.git
-   cd nacao_nutrida_flutter
-   ```
+#### 1. Clone o repositório
+```bash
+git clone https://github.com/Fredericobarbosa/nacao_nutrida_flutter.git
+cd nacao_nutrida_flutter
+```
 
-2. **Instale as dependências**
-   ```bash
-   flutter pub get
-   ```
+#### 2. Configure o Frontend (Flutter)
+```bash
+# Instale as dependências
+flutter pub get
 
-3. **Execute em modo de desenvolvimento**
-   ```bash
-   # Para web (recomendado)
-   flutter run -d chrome
-   
-   # Para dispositivo conectado
-   flutter run
-   ```
+# Verifique se tudo está configurado corretamente
+flutter doctor
+```
 
-4. **Build para produção**
-   ```bash
-   # Web
-   flutter build web
-   
-   # Android
-   flutter build apk
-   ```
+#### 3. Configure o Backend (Node.js/Express)
+
+**3.1 - Configure variáveis de ambiente**
+```bash
+# Entre na pasta do servidor
+cd lib/server
+
+# Copie o arquivo de exemplo
+cp .env.example .env
+
+# Abra o arquivo .env e preencha as variáveis:
+# DATABASE_URL=sua_url_do_banco_de_dados
+# JWT_SECRET=sua_chave_secreta_jwt
+# JWT_EXPIRES_IN=1d
+```
+
+**3.2 - Instale dependências do servidor**
+```bash
+# Instale as dependências npm
+npm install
+
+# Opcional: Configure o Prisma (se usando banco de dados)
+npx prisma migrate dev
+```
+
+**3.3 - Inicie o servidor**
+```bash
+# Desenvolver com hot reload (recomendado)
+npm run dev
+
+# Ou em produção
+npm run build
+npm start
+```
+
+O servidor estará rodando em `http://localhost:3000`
+
+#### 4. Volte para a raiz do projeto e execute a app
+```bash
+cd ../../
+
+# Para dispositivo conectado
+flutter run
+```
+
+#### 5. Build para produção
+```bash
+# Web
+flutter build web
+
+# Android
+flutter build apk
+
+# Backend
+cd lib/server && npm run build
+```
 
 ## 💻 Uso
 
 ### Desenvolvimento Local
+
+#### Frontend (Flutter)
 ```bash
 # Executar em modo debug
 flutter run -d chrome --debug
@@ -175,6 +248,56 @@ flutter analyze
 
 # Verificar dispositivos disponíveis
 flutter devices
+```
+
+#### Backend (Node.js/Express)
+```bash
+# Entrar na pasta do servidor
+cd lib/server
+
+# Instalar dependências (se não fez ainda)
+npm install
+
+# Executar em produção
+npm start
+
+# Verificar logs
+npm run dev  # Mostra logs no console
+
+# Executar migrations do banco de dados
+npx prisma migrate dev
+npx prisma studio  # Interface gráfica do banco
+```
+
+### Arquitetura da Aplicação
+
+**Frontend → Backend:**
+1. Flutter realiza requisições HTTP para `http://localhost:3000`
+2. Backend processa as requisições e acessa o banco de dados
+3. Resposta é retornada em JSON para o frontend
+4. Analytics são coletados localmente no frontend
+
+**Configuração de API:**
+Arquivo: `lib/config/api.dart`
+```dart
+class ApiConfig {
+  static const String baseUrl = 'http://localhost:3000/api';
+}
+```
+
+### Variáveis de Ambiente Necessárias
+
+Arquivo: `lib/server/.env`
+```bash
+# Banco de dados (PostgreSQL/MySQL/SQLite)
+DATABASE_URL="postgresql://usuario:senha@localhost:5432/nacao_nutrida"
+
+# JWT para autenticação
+JWT_SECRET="sua_chave_secreta_muito_segura_aqui"
+JWT_EXPIRES_IN="1d"
+
+# Opcional: Porta do servidor
+PORT=3000
 ```
 
 ### Acessar Analytics
@@ -314,7 +437,9 @@ Este projeto está sob licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais
 
 Frederico Barbosa
 
-Jorge Santos 
+Jorge Santos
+
+Rafael Victor Redoval de Sousa
 
 Yago Mouro
 

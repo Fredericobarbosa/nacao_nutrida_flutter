@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'models/auth_manager.dart';
 import 'models/campaign.dart';
@@ -14,8 +15,14 @@ import 'screens/analytics_dashboard.dart';
 import 'screens/dados_perfil.dart';
 import 'screens/editar_perfil.dart';
 import 'screens/painel_screen.dart';
+import 'config/api.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await ApiConfig.initialize();
+
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+
   runApp(
     ChangeNotifierProvider(create: (_) => AuthManager(), child: const MyApp()),
   );

@@ -36,7 +36,7 @@ class _DescobrirPageState extends State<DescobrirPage> {
 
   Future<void> _fetchEstadosCidades() async {
     // Tenta buscar do backend com até 2 tentativas. Se falhar, usa fallback embutido para dev.
-    final api = ApiService(baseUrl: ApiConfig.baseUrlAndroid);
+    final api = ApiService(baseUrl: ApiConfig.baseUrl);
     int attempts = 0;
     while (attempts < 2) {
       attempts += 1;
@@ -86,7 +86,6 @@ class _DescobrirPageState extends State<DescobrirPage> {
         _estadoSelecionado = _estadosCidades[0]['sg_estado'] as String;
       }
     });
-    // opcional: log para dev
     print('Usando fallback local de estadosCidades (dev)');
   }
 
@@ -96,7 +95,7 @@ class _DescobrirPageState extends State<DescobrirPage> {
       _error = null;
     });
 
-    final api = ApiService(baseUrl: ApiConfig.baseUrlAndroid);
+    final api = ApiService(baseUrl: ApiConfig.baseUrl);
     try {
       final resp = await api.get('/campanhas');
       if (resp.statusCode == 200) {
@@ -183,7 +182,7 @@ class _DescobrirPageState extends State<DescobrirPage> {
       id: id,
       title: title,
       description: description,
-      imageUrl: imageUrl,
+      imageUrl: "assets/generic_nn.jpg",
       status: status,
       metaAlimentos: metaAlimentos,
       alimentosArrecadados: alimentosArrecadados,
@@ -425,97 +424,107 @@ class _DescobrirPageState extends State<DescobrirPage> {
               child: _loadingApi
                   ? const Center(child: CircularProgressIndicator())
                   : _error != null
-                  ? Center(child: Text(_error!))
-                  : _campanhas.isEmpty
-                  ? const Center(child: Text('Nenhuma campanha encontrada'))
-                  : Column(
-                      children: _campanhas
-                          .map(
-                            (campanha) => GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).pushNamed(
-                                  '/detalhes-campanha',
-                                  arguments: campanha,
-                                );
-                              },
-                              child: Card(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(16),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Flexible(
-                                        flex: 0,
-                                        child: Container(
-                                          width: 80,
-                                          height: 60,
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(
-                                              8,
-                                            ),
-                                            color: Colors.grey.withAlpha(30),
-                                          ),
-                                          child: const Icon(
-                                            Icons.campaign,
-                                            size: 32,
-                                            color: Colors.green,
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 12),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              campanha.title,
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.w500,
-                                                color: Color(0xFF191929),
-                                              ),
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                            const SizedBox(height: 4),
-                                            Text(
-                                              'Alimentos • ${campanha.tiposAlimento.take(3).join(' • ')}',
-                                              style: const TextStyle(
-                                                color: Color(0xFF8d8d8d),
-                                                fontSize: 12,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 8),
-                                            Row(
-                                              children: [
-                                                const Icon(
-                                                  Icons.trending_up,
-                                                  size: 12,
-                                                  color: Colors.green,
-                                                ),
-                                                const SizedBox(width: 4),
-                                                Text(
-                                                  '${campanha.percentualArrecadado.toStringAsFixed(1)}% arrecadado',
-                                                  style: const TextStyle(
+                      ? Center(child: Text(_error!))
+                      : _campanhas.isEmpty
+                          ? const Center(child: Text('Nenhuma campanha encontrada'))
+                          : Column(
+                              children: _campanhas
+                                  .map(
+                                    (campanha) => GestureDetector(
+
+                                      onTap: () async {
+                                        // 1. Aguarda a tela de detalhes fechar
+                                        await Navigator.of(context).pushNamed(
+                                          '/doar-alimentos',
+                                          arguments: campanha,
+                                        );
+
+                                        // 2. Quando voltar, atualiza as campanhas
+                                        //    usando os filtros atuais
+                                        _fetchCampanhas(
+                                          estado: _estadoSelecionado,
+                                          cidade: _cidadeController.text,
+                                        );
+                                      },
+
+                                      child: Card(
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(16),
+                                          child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Flexible(
+                                                flex: 0,
+                                                child: Container(
+                                                  width: 80,
+                                                  height: 60,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(
+                                                      8,
+                                                    ),
+                                                    color: Colors.grey.withAlpha(30),
+                                                  ),
+                                                  child: const Icon(
+                                                    Icons.campaign,
+                                                    size: 32,
                                                     color: Colors.green,
-                                                    fontSize: 11,
-                                                    fontWeight: FontWeight.w500,
                                                   ),
                                                 ),
-                                              ],
-                                            ),
-                                          ],
+                                              ),
+                                              const SizedBox(width: 12),
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      campanha.title,
+                                                      style: const TextStyle(
+                                                        fontWeight: FontWeight.w500,
+                                                        color: Color(0xFF191929),
+                                                      ),
+                                                      maxLines: 2,
+                                                      overflow: TextOverflow.ellipsis,
+                                                    ),
+                                                    const SizedBox(height: 4),
+                                                    Text(
+                                                      'Alimentos • ${campanha.tiposAlimento.take(3).join(' • ')}',
+                                                      style: const TextStyle(
+                                                        color: Color(0xFF8d8d8d),
+                                                        fontSize: 12,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 8),
+                                                    Row(
+                                                      children: [
+                                                        const Icon(
+                                                          Icons.trending_up,
+                                                          size: 12,
+                                                          color: Colors.green,
+                                                        ),
+                                                        const SizedBox(width: 4),
+                                                        Text(
+                                                          '${campanha.percentualArrecadado.toStringAsFixed(1)}% arrecadado',
+                                                          style: const TextStyle(
+                                                            color: Colors.green,
+                                                            fontSize: 11,
+                                                            fontWeight: FontWeight.w500,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                ),
-                              ),
+                                    ),
+                                  )
+                                  .toList(),
                             ),
-                          )
-                          .toList(),
-                    ),
             ),
             const Footer(),
           ],

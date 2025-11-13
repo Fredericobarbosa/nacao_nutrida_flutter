@@ -255,7 +255,7 @@ class _CadastroUsuarioFormState extends State<CadastroUsuarioForm> {
 
   Future<void> _fetchEstadosCidades() async {
     try {
-      final api = ApiService(baseUrl: ApiConfig.baseUrlAndroid);
+      final api = ApiService(baseUrl: ApiConfig.baseUrl);
       final resp = await api.get('/estadosCidades');
       if (resp.statusCode == 200) {
         final data = jsonDecode(resp.body) as List<dynamic>;
@@ -285,7 +285,7 @@ class _CadastroUsuarioFormState extends State<CadastroUsuarioForm> {
     }
 
     setState(() => _loading = true);
-    final api = ApiService(baseUrl: ApiConfig.baseUrlAndroid);
+    final api = ApiService(baseUrl: ApiConfig.baseUrl);
 
     // Normaliza cpf/cnpj: envia somente dígitos para o backend
     String? cpfDigits;
@@ -342,7 +342,7 @@ class _CadastroUsuarioFormState extends State<CadastroUsuarioForm> {
       final payload = {'user_infos': userInfos};
       // Logs para depuração
       print(
-        '>>> Cadastrando usuário - POST ' + ApiConfig.baseUrlAndroid + path,
+        '>>> Cadastrando usuário - POST ' + ApiConfig.baseUrl + path,
       );
       print('>>> Payload: ' + jsonEncode(payload));
 
