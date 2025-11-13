@@ -4,7 +4,6 @@ import '../services/api_service.dart';
 import '../config/api.dart';
 import 'package:intl/intl.dart'; 
 
-// Classe helper para os alimentos vindos da API
 class _Alimento {
   final String id;
   final String nome;
@@ -14,7 +13,6 @@ class _Alimento {
   factory _Alimento.fromJson(Map<String, dynamic> json) {
     return _Alimento(
       id: json['id']?.toString() ?? json['_id']?.toString() ?? '',
-      // CORREÇÃO: As chaves do seu backend parecem estar no JSON aninhado
       nome: json['nm_alimento']?.toString() ?? json['nome']?.toString() ?? 'Sem nome',
     );
   }

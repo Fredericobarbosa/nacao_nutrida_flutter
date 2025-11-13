@@ -63,11 +63,11 @@ class _DetalhesCampanhaPageState extends State<DetalhesCampanhaPage> {
       for (final item in json['alimentos']) {
         final nome = item['nm_alimento'] ?? item['nome'] ?? 'Desconhecido';
 
-        // Popula o mapa de Metas
+        
         final meta = (item['qt_alimento_meta'] ?? 0) as int;
         metaAlimentos[nome] = meta;
 
-        // Popula o mapa de Arrecadados
+        
         final qt = (item['qt_alimento_doado'] ?? 0) as int;
         arrecadados[nome] = qt;
       }
@@ -97,7 +97,7 @@ class _DetalhesCampanhaPageState extends State<DetalhesCampanhaPage> {
     } else if (json['fg_campanha_ativa'] == false) {
       status = 'inativa';
     } else {
-      status = json['st_campanha'] ?? 'ativa'; // Fallback
+      status = json['st_campanha'] ?? 'ativa';
     }
 
     final dtFimJson = json['dt_encerramento_campanha'] ?? json['dt_fim'];
@@ -172,7 +172,7 @@ class _DetalhesCampanhaPageState extends State<DetalhesCampanhaPage> {
                   : SingleChildScrollView(
                       child: Column(
                         children: [
-                          // Imagem da Campanha
+                          
                           Container(
                             width: double.infinity,
                             height: 200,
@@ -182,13 +182,13 @@ class _DetalhesCampanhaPageState extends State<DetalhesCampanhaPage> {
                               fit: BoxFit.cover,
                             ),
                           ),
-                          // Conteúdo Principal
+                          
                           Padding(
                             padding: const EdgeInsets.all(16),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                // Status Badge
+                                
                                 Align(
                                   alignment: Alignment.topRight,
                                   child: Container(
@@ -215,7 +215,7 @@ class _DetalhesCampanhaPageState extends State<DetalhesCampanhaPage> {
                                   ),
                                 ),
                                 const SizedBox(height: 12),
-                                // Título
+                                
                                 Text(
                                   _campanha!.title,
                                   style: const TextStyle(
@@ -225,7 +225,7 @@ class _DetalhesCampanhaPageState extends State<DetalhesCampanhaPage> {
                                   ),
                                 ),
                                 const SizedBox(height: 8),
-                                // Descrição
+                                
                                 Text(
                                   _campanha!.description,
                                   style: const TextStyle(
@@ -235,7 +235,7 @@ class _DetalhesCampanhaPageState extends State<DetalhesCampanhaPage> {
                                   ),
                                 ),
                                 const SizedBox(height: 24),
-                                // Card de Informações Principais
+                                
                                 Card(
                                   color: Colors.white,
                                   elevation: 2,
@@ -278,7 +278,7 @@ class _DetalhesCampanhaPageState extends State<DetalhesCampanhaPage> {
                                   ),
                                 ),
                                 const SizedBox(height: 24),
-                                // Seção de Alimentos
+                                
                                 if (_campanha!.metaAlimentos.isNotEmpty)
                                   Column(
                                     crossAxisAlignment:
@@ -367,7 +367,7 @@ class _DetalhesCampanhaPageState extends State<DetalhesCampanhaPage> {
                                     ],
                                   ),
                                 const SizedBox(height: 24),
-                                // Botão de Doação
+                                
                                 SizedBox(
                                   width: double.infinity,
                                   height: 50,

@@ -86,7 +86,6 @@ class _DescobrirCampanhaPage extends State<DescobrirCampanhaPage> {
         _estadoSelecionado = _estadosCidades[0]['sg_estado'] as String;
       }
     });
-    // opcional: log para dev
     print('Usando fallback local de estadosCidades (dev)');
   }
 

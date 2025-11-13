@@ -9,7 +9,6 @@ class LeftSidebar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Main CTA Section
         Card(
           child: Padding(
             padding: const EdgeInsets.all(24),

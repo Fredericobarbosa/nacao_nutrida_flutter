@@ -6,7 +6,6 @@ import '../components/header_login.dart';
 import '../services/api_service.dart';
 import '../config/api.dart';
 import 'dart:convert';
-// image picker and intl removed to avoid adding new dependencies here
 
 class DadosPerfil extends StatefulWidget {
   DadosPerfil({super.key});
@@ -20,7 +19,6 @@ class _DadosPerfilState extends State<DadosPerfil> {
   bool _loading = true;
   String? _error;
   String? _cpf;
-  // no avatar ImageProvider here (ProfileAvatar currently only supports size)
 
   @override
   void initState() {
@@ -72,23 +70,19 @@ class _DadosPerfilState extends State<DadosPerfil> {
   String _formatBirthDate(String? raw) {
     if (raw == null || raw.isEmpty) return '';
     try {
-      // Try parsing common formats: full ISO or yyyy-MM-dd
       DateTime dt = DateTime.parse(raw);
       final day = dt.day.toString().padLeft(2, '0');
       final month = dt.month.toString().padLeft(2, '0');
       final year = dt.year.toString();
       return '$day/$month/$year';
     } catch (_) {
-      // If it's already in dd/MM/yyyy or another format, try a simple heuristics
       final parts = raw.split('-');
       if (parts.length == 3) {
-        // assume yyyy-MM-dd
         final y = parts[0];
         final m = parts[1].padLeft(2, '0');
         final d = parts[2].padLeft(2, '0');
         return '$d/$m/$y';
       }
-      // fallback: return raw
       return raw;
     }
   }

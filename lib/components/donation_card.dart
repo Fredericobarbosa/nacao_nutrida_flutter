@@ -10,9 +10,9 @@ class DonationCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final campaign = donation.campaign;
     return Align(
-      alignment: Alignment.center, // 👈 centraliza o card na tela
+      alignment: Alignment.center, 
       child: SizedBox(
-        width: 400, // 👈 define largura fixa
+        width: 400, 
         child: Card(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
